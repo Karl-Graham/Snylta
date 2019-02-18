@@ -1,0 +1,21 @@
+# folders
+
+bin
+obj
+packages
+.vs
+.vscode
+
+Migrations
+
+# files
+
+*.user
+*.suo
+*.log
+*.dll
+*.pdb
+
+# specific files
+
+project.lock.json
