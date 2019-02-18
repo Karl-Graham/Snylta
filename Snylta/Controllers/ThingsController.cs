@@ -168,7 +168,8 @@ namespace Snylta
         public async Task<IActionResult> Snylta(string id)
         {
             User user = await _userManager.GetUserAsync(User);
-            user.Things
+
+            return Ok(user.Things);
         }
 
         private bool ThingExists(string id)
