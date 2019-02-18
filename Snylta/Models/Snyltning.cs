@@ -13,6 +13,6 @@ namespace Snylta.Models
         public virtual Thing Thing { get; set; }
         public string UserId { get; set; }
         public virtual User Snyltare { get; set; }
-        public bool Snyltad { get; set; }
+        public bool Active { get; set; }
     }
 }
