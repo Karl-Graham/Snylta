@@ -10,7 +10,7 @@ namespace Snylta.Models
     public class UserRoles : IdentityUserRole<string>
     {
         public string GroupId { get; set; }
-        public Group Group { get; set; }
+        public virtual Group Group { get; set; }
 
     }
 }

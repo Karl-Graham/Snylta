@@ -10,9 +10,9 @@ namespace Snylta.Models
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public ICollection<GroupThings> GroupThings { get; set; }
+        public virtual ICollection<GroupThings> GroupThings { get; set; }
         public string UserId { get; set; }
-        public User Owner { get; set; }
+        public virtual User Owner { get; set; }
 
 
     }
