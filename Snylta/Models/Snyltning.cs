@@ -13,5 +13,6 @@ namespace Snylta.Models
         public Thing Thing { get; set; }
         public string UserId { get; set; }
         public User Snyltare { get; set; }
+        public bool Snyltade { get; set; }
     }
 }

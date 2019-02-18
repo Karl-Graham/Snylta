@@ -14,5 +14,6 @@ namespace Snylta.Models
         public string UserId { get; set; }
         public User Owner { get; set; }
 
+
     }
 }
