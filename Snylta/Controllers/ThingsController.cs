@@ -8,17 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using Snylta.Data;
 using Snylta.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace Snylta
 {
     public class ThingsController : Controller
     {
         private readonly ApplicationDbContext _context;
-       
+        private readonly UserManager<User> _userManager;
 
-        public ThingsController(ApplicationDbContext context)
+        public ThingsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Things
@@ -154,6 +157,12 @@ namespace Snylta
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Snylta(string id)
+        {
+            User user = await _userManager.GetUserAsync(User);
+            user.Things
         }
 
         private bool ThingExists(string id)
