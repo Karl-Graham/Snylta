@@ -10,9 +10,9 @@ namespace Snylta.Models
     {
         public string Id { get; set; }
         public string ThingId { get; set; }
-        public Thing Thing { get; set; }
+        public virtual Thing Thing { get; set; }
         public string UserId { get; set; }
-        public User Snyltare { get; set; }
+        public virtual User Snyltare { get; set; }
         public bool Snyltad { get; set; }
     }
 }

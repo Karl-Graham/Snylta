@@ -9,8 +9,8 @@ namespace Snylta.Models
 {
     public class User : IdentityUser
     {
-        public ICollection<Thing> Things { get; set; }
-        public ICollection<GroupUsers> GroupUsers { get; set; }
-        public ICollection<Snyltning> Snyltningar { get; set; }
+        public virtual ICollection<Thing> Things { get; set; }
+        public virtual ICollection<GroupUsers> GroupUsers { get; set; }
+        public virtual  ICollection<Snyltning> Snyltningar { get; set; }
     }
 }

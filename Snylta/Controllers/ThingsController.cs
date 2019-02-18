@@ -27,6 +27,12 @@ namespace Snylta
         // GET: Things
         public async Task<IActionResult> Index()
         {
+            var applicationDbContext = _context.Thing;
+            return View(await applicationDbContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> ShowMyThings()
+        {
             var applicationDbContext = _context.Thing.Include(t => t.Owner);
             return View(await applicationDbContext.ToListAsync());
         }
