@@ -29,5 +29,9 @@ namespace Snylta.Data
             modelBuilder.Entity<UserRoles>()
                 .HasKey(userRoles => new { userRoles.GroupId, userRoles.RoleId, userRoles.UserId });
         }
+
+        public DbSet<Snylta.Models.Group> Group { get; set; }
+
+        public DbSet<Snylta.Models.Thing> Thing { get; set; }
     }
 }
