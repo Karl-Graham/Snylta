@@ -18,16 +18,16 @@ namespace Snylta.Models
         public string UserId { get; set; }
         public virtual User Snyltare { get; set; }
 
-        public Snyltning(User user, Thing thing)
-        {
-            Snyltare = user;
-            Thing = thing;
-            Active = true;
-        }
+        //public Snyltning(User user, Thing thing)
+        //{
+        //    UserId = user.Id;
+        //    ThingId = thing.Id;
+        //    Active = true;
+        ////}
 
-        public void EndSnyltning()
-        {
-            Active = false;
-        }
+        //public void EndSnyltning()
+        //{
+        //    Active = false;
+        //}
     }
 }

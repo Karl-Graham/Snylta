@@ -165,18 +165,18 @@ namespace Snylta
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Snylta(string id)
-        {
-            User user = await _userManager.GetUserAsync(User);
-            var thing = _context.Thing.Single(x => x.Id == id);
+        //public async Task<IActionResult> Snylta(string id)
+        //{
+        //    User user = await _userManager.GetUserAsync(User);
+        //    var thing = _context.Thing.Single(x => x.Id == id);
 
-            var snyltning = new Snyltning(user, thing);
+        //    var snyltning = new Snyltning(user, thing);
 
-            _context.Add(snyltning);
-            _context.SaveChanges();
+        //    _context.Add(snyltning);
+        //    _context.SaveChanges();
 
-            return Ok(user.Things);
-        }
+        //    return Ok(user.Things);
+        //}
 
         private bool ThingExists(string id)
         {
