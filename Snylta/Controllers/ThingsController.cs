@@ -170,6 +170,12 @@ namespace Snylta
         public async Task<IActionResult> Snylta(string id)
         {
             User user = await _userManager.GetUserAsync(User);
+            var thing = _context.Thing.Single(x => x.Id == id);
+
+            var snyltning = new Snyltning(user, thing);
+
+            _context.Add(snyltning);
+            _context.SaveChanges();
 
             return Ok(user.Things);
         }
