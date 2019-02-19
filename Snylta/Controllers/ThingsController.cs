@@ -174,7 +174,7 @@ namespace Snylta
         public async Task<IActionResult> Snyltningar(string id) 
         {
             User user = await _userManager.GetUserAsync(User);
-            return Ok(user.Snyltningar.Where(x => x.Active).Select(x => x.Thing.Name));
+            return View(user.Snyltningar.Where(x => x.Active).Select(x=> x.Thing).ToList());
         }
 
         public async Task<IActionResult> Snylta(string id)
