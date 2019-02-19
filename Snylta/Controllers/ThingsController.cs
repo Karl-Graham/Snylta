@@ -32,11 +32,13 @@ namespace Snylta
             return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<IActionResult> ShowMyThings()
+        public async Task<IActionResult> MyThings()
         {
-            var applicationDbContext = _context.Thing.Include(t => t.Owner);
+            User user = await _userManager.GetUserAsync(User);
+            var applicationDbContext = _context.Thing.Where(t => t.Owner.Id == user.Id);
             return View(await applicationDbContext.ToListAsync());
         }
+
 
         // GET: Things/Details/5
         public async Task<IActionResult> Details(string id)
