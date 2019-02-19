@@ -27,7 +27,9 @@ namespace Snylta
         // GET: Things
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Thing;
+            User user = await _userManager.GetUserAsync(User);
+            var applicationDbContext = _context.Thing.Where(t => t.Owner.Id != user.Id);
+            
             ViewData["Title"] = "SnyltIndex";
             return View(await applicationDbContext.ToListAsync());
         }
@@ -172,7 +174,7 @@ namespace Snylta
         public async Task<IActionResult> Snyltningar(string id) 
         {
             User user = await _userManager.GetUserAsync(User);
-            return Ok(user.Snyltningar.Where(x => x.Active).Select(x => x.Thing.Name));
+            return View(user.Snyltningar.Where(x => x.Active).Select(x=> x.Thing).ToList());
         }
 
         public async Task<IActionResult> Snylta(string id)

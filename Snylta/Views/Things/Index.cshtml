@@ -1,11 +1,14 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
 <h2>@ViewData["Title"]</h2>
-
-
+@{int i = 0;}
 
 @foreach (var thing in Model)
 {
+    
+    var cardId = "card" + i;
+
+
     @if (!thing.Snyltningar.Any(x => x.Active))
     {
         <div class="disabled">
@@ -27,7 +30,10 @@
 </div>
     }
     else
+
     {
+ <!-- Card -->
+    <a data-toggle="modal" data-target="#@cardId">
         <div class="card d-inline-block disabled" aria-disabled="true" style="width: 18rem;">
             <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
             <div class="card-body">
@@ -38,8 +44,34 @@
 
             </div>
         </div>
+    </a>
     }
 
 
+    <!-- Modal -->
+    <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        @**@
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @thing.Name
+                    <a asp-action="Snylta" asp-route-id="@thing.Id" class="btn btn-primary">Snylta</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 }
+    i++;
 @*<a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>*@
