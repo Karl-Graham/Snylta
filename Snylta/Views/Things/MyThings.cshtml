@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Owner)
+                Snyltad
             </th>
             <th></th>
         </tr>
@@ -29,14 +29,21 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+                    @{var i = item.Snyltningar.Any(x => x.Active);}
+                        @i
+                    </td>
+    
+                    <td>
+    
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+    
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+    
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+    
+                    </td>
+    
+                </tr>
         }
     </tbody>
 </table>
