@@ -201,6 +201,17 @@ namespace Snylta
 
             return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
         }
+        
+        public async Task<IActionResult> AvSnylta(string id)
+        {
+            User user = await _userManager.GetUserAsync(User);
+
+            var snyltning = _context.Snyltning.FirstOrDefault(x => x.ThingId == id && x.Active);
+            snyltning.Active = false;
+            _context.SaveChanges();
+            
+            return RedirectToAction("MyThings");
+        }
 
         public async Task<IActionResult> Return(string id)
         {

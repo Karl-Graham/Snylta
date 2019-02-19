@@ -33,5 +33,7 @@ namespace Snylta.Data
         public DbSet<Snylta.Models.Group> Group { get; set; }
 
         public DbSet<Snylta.Models.Thing> Thing { get; set; }
+
+        public DbSet<Snylta.Models.Snyltning> Snyltning { get; set; }
     }
 }
