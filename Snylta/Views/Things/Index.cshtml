@@ -2,14 +2,44 @@
 
 <h2>@ViewData["Title"]</h2>
 
+
+
 @foreach (var thing in Model)
 {
-    <div class="card d-inline-block" style="width: 18rem;">
-        <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-        <div class="card-body">
-            <h5 class="card-title">@thing.Name</h5>
-            <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-            <a href="#" class="btn btn-primary">Snylta</a>
+    @if (!thing.Snyltningar.Any(x => x.Active))
+    {
+        <div class="disabled">
+        <div class="card d-inline-block" style="width: 18rem;">
+
+            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200">  @*alt="..."*@
+            <div class="card-body">
+                <h5 class="card-title">@thing.Name</h5>
+                <p class="text-danger">
+                    <span class="sr-only">Danger: </span>
+                    Denna prylen är tyvärr redan snyltad!
+                </p>
+                @*<p class="card-text"><strong>ID: </strong>@thing.Id</p>*@
+                @*<a href="#" class="btn btn-primary">Snylta</a>*@
+                <a href="#" class="btn btn-primary disabled" tabindex="-1" aria-disabled="true">Snylta</a>
+
+            </div>
         </div>
-    </div>
+</div>
+    }
+    else
+    {
+        <div class="card d-inline-block disabled" aria-disabled="true" style="width: 18rem;">
+            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
+            <div class="card-body">
+                <h5 class="card-title">@thing.Name</h5>
+                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
+                <a href="#" class="btn btn-primary">Snylta</a>
+                @*<a href="#" class="btn btn-primary disabled" tabindex="-1" aria-disabled="true">Snylta</a>*@
+
+            </div>
+        </div>
+    }
+
+
 }
+@*<a class="nav-item nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>*@
