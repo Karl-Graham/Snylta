@@ -28,6 +28,7 @@ namespace Snylta
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Thing;
+            ViewData["Title"] = "SnyltIndex";
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -75,7 +76,7 @@ namespace Snylta
             if (ModelState.IsValid)
             {
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                
+
                 _context.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -167,17 +168,60 @@ namespace Snylta
             return RedirectToAction(nameof(Index));
         }
 
+        //ANVÄNDS BARA I TESTNINGSSYFTE, KAN TAS BORT
+        public async Task<IActionResult> Snyltningar(string id) 
+        {
+            User user = await _userManager.GetUserAsync(User);
+            return Ok(user.Snyltningar.Where(x => x.Active).Select(x => x.Thing.Name));
+        }
+
         public async Task<IActionResult> Snylta(string id)
         {
             User user = await _userManager.GetUserAsync(User);
-            var thing = _context.Thing.Single(x => x.Id == id);
+            Thing thing = _context.Thing.FirstOrDefault(x => x.Id == id);
 
-            var snyltning = new Snyltning(user, thing);
+            //Kontrollerar att prylen är tillgänglig och att den får lånas av användaren
+                if (thing == null)
+                    return BadRequest($"Hittade ingen pryl med id {id}");
 
-            _context.Add(snyltning);
+                if (thing.Snyltningar.Any(x => x.Active))
+                    if (thing.Snyltningar.FirstOrDefault(x => x.Active).Snyltare == user)
+                        return BadRequest($"Du snyltar redan prylen {thing.Name}");
+                    else
+                        return BadRequest($"Prylen {thing.Name} är redan snyltad");
+
+                if (thing.Owner == user)
+                    return BadRequest($"Du kan inte låna din egen pryl!");
+
+
+            _context.Add(new Snyltning(user.Id, thing.Id));
             _context.SaveChanges();
 
-            return Ok(user.Things);
+            return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
+        }
+
+        public async Task<IActionResult> Return(string id)
+        {
+            Thing thing = _context.Thing.FirstOrDefault(x => x.Id == id);
+
+           //Kollar att prylen finns och snyltas av dig
+                if (thing == null)
+                    return BadRequest($"Hittade ingen snyltad pryl med id {id}");
+
+                Snyltning snyltning = thing.Snyltningar.FirstOrDefault(x => x.Active);
+
+                if (snyltning == null)
+                    return BadRequest($"Hittade ingen aktiv snyltning på pryl med id {id}");
+
+                User user = await _userManager.GetUserAsync(User);
+
+                if (user != snyltning.Snyltare)
+                    return BadRequest($"Du {user.UserName} kan inte lämna tillbaks en pryl som snyltas av någon annan! {thing.Name} snyltas av {snyltning.Snyltare.UserName}");
+
+            snyltning.Active = false;
+            _context.SaveChanges();
+
+            return Ok($"Snyltningena av {thing.Name} har avslutats");
         }
 
         private bool ThingExists(string id)

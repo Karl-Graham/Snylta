@@ -10,6 +10,7 @@
     <h4>Thing</h4>
     <hr />
     <dl class="dl-horizontal">
+
         <dt>
             @Html.DisplayNameFor(model => model.Name)
         </dt>
@@ -17,10 +18,16 @@
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Owner)
+            @Html.DisplayNameFor(model => model.Owner) owner id
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Owner.Id)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Id) thing id
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Id)
         </dd>
     </dl>
 </div>

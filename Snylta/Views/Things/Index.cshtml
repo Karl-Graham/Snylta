@@ -1,41 +1,15 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
-@{
-    ViewData["Title"] = "Index";
-}
+<h2>@ViewData["Title"]</h2>
 
-<h2>Index</h2>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Owner)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Owner.UserName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@foreach (var thing in Model)
+{
+    <div class="card d-inline-block" style="width: 18rem;">
+        <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
+        <div class="card-body">
+            <h5 class="card-title">@thing.Name</h5>
+            <p class="card-text"><strong>ID: </strong>@thing.Id</p>
+            <a href="#" class="btn btn-primary">Snylta</a>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
