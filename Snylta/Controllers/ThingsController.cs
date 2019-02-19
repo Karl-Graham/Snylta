@@ -28,6 +28,7 @@ namespace Snylta
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Thing;
+            ViewData["Title"] = "SnyltIndex";
             return View(await applicationDbContext.ToListAsync());
         }
 
