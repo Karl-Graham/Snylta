@@ -102,15 +102,15 @@ namespace Snylta
                 var fileName = thingGuid + file.FileName;
                 var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
+                
 
-
-                    if (file.Length > 0)
+                if (file.Length > 0)
+                {
+                    using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
+                        await file.CopyToAsync(stream);
 
-                        }
+                    }
 
                         thing.ThingPic = fileName;
                         _context.Thing.Add(thing);

@@ -11,10 +11,12 @@
     @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
     {
         var cardId = "card" + i;
+
         <!-- Card -->
         <a data-toggle="modal" data-target="#@cardId">
             @await Component.InvokeAsync("Card", thing)
         </a>
+
         <!-- Modal -->
         <div class="modal fade " id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="">
             <div class="modal-dialog modal-lg" role="document">
@@ -35,7 +37,14 @@
                                     <h5>Ägare</h5>
                                     <p>@thing.Owner.UserName</p>
                                     <h5>Kontaktuppgifter</h5>
-                                    <p>Telefonnummer: 0766162923</p>
+                                    @if (thing.Owner.PhoneNumber != null)
+                                    {
+                                        <p>Telefonnummer: @thing.Owner.PhoneNumber</p>
+                                    }
+                                    @if (thing.Owner.PhoneNumber != null)
+                                    {
+                                        <p>Epost: @thing.Owner.Email</p>
+                                    }
                                     <p>Epost: magnus.tidqvist@gmail.com</p>
                                 </div>
                             </div>

@@ -17,11 +17,9 @@ namespace Snylta.Models
         public string Name { get; set; }
 
         //Nytt
-        //[Required]
         [Display(Name="Ladda upp bild")]
         public string ThingPic { get; set; }
 
-        [Required]
         [Display(Name = "Beskrivning")]
         public string Description { get; set; }
         //
