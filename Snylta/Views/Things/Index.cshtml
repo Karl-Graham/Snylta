@@ -65,6 +65,8 @@
 
     @foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
     {
+        var cardId = "card" + i;
+
         <!-- Card -->
         <a data-toggle="modal" data-target="#@cardId">
             @await Component.InvokeAsync("Card", thing)

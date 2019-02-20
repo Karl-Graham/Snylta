@@ -19,7 +19,7 @@ namespace Snylta.Models
         //Nytt
         //[Required]
         [Display(Name="Ladda upp bild")]
-        public byte[] ThingPic { get; set; }
+        public string ThingPic { get; set; }
 
         //[Required]
         [Display(Name = "Beskrivning")]
