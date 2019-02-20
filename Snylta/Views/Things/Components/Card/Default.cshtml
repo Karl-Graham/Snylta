@@ -1,9 +1,14 @@
 ﻿@model Thing
 
-<div class="card d-inline-block" aria-disabled="true" style="width: 230px; height: 24rem;">
-    <object data="~/thingimages/@Model.ThingPic"  width="230" type="image/jpg">
-        <img src="~/fallback.png" width="230">
-    </object>
+<div class="card d-inline-block rounded-" aria-disabled="true" >
+    @if (Model.ThingPic != null)
+    {
+        <img class="cardPic rounded-top" src="~/thingimages/@Model.ThingPic" >
+    }
+    else
+    {
+        <img class="cardPic rounded-top"  src="~/images/fallback.jpg" />
+    }
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
         <p class="card-text">@Model.Id</p>

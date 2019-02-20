@@ -4,8 +4,6 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Mina Prylar</h2>
-
 @{int i = 0;}
 
 @if (Model.Where(t => t.Snyltningar.Any(s => s.Active)).Count() > 0)

@@ -1,12 +1,12 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
 
-<h2>@ViewData["Title"]</h2>
-
 @{int i = 0; }
 
 @if (Model.Where(t => t.Snyltningar.All(s => !s.Active)).Count() > 0)
 {
+    <h2>Prylar att snylta</h2>
+
     <!-- Tillgängliga prylar -->
     @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
     {
