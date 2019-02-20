@@ -61,6 +61,8 @@ namespace Snylta
             return View(thing);
         }
 
+
+
         // GET: Things/Create
         public IActionResult Create()
         {
