@@ -73,10 +73,11 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Thing thing)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing)
         {
             if (ModelState.IsValid)
             {
+
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 _context.Add(thing);
@@ -204,37 +205,11 @@ namespace Snylta
         
         public async Task<IActionResult> AvSnylta(string id)
         {
-            User user = await _userManager.GetUserAsync(User);
-
             var snyltning = _context.Snyltning.FirstOrDefault(x => x.ThingId == id && x.Active);
             snyltning.Active = false;
             _context.SaveChanges();
             
             return RedirectToAction("MyThings");
-        }
-
-        public async Task<IActionResult> Return(string id)
-        {
-            Thing thing = _context.Thing.FirstOrDefault(x => x.Id == id);
-
-           //Kollar att prylen finns och snyltas av dig
-                if (thing == null)
-                    return BadRequest($"Hittade ingen snyltad pryl med id {id}");
-
-                Snyltning snyltning = thing.Snyltningar.FirstOrDefault(x => x.Active);
-
-                if (snyltning == null)
-                    return BadRequest($"Hittade ingen aktiv snyltning på pryl med id {id}");
-
-                User user = await _userManager.GetUserAsync(User);
-
-                if (user != snyltning.Snyltare)
-                    return BadRequest($"Du {user.UserName} kan inte lämna tillbaks en pryl som snyltas av någon annan! {thing.Name} snyltas av {snyltning.Snyltare.UserName}");
-
-            snyltning.Active = false;
-            _context.SaveChanges();
-
-            return Ok($"Snyltningena av {thing.Name} har avslutats");
         }
 
         private bool ThingExists(string id)
