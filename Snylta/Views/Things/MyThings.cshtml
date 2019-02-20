@@ -4,52 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Mina Prylar</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Lägg in ny pryl</a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                Snyltad
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @{var b = item.Snyltningar.Any(x => x.Active);}
-                    @b
-                </td>
 
-                <td>
-
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-
-                </td>
-
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-<h2>Mina Snyltade Saker</h2>
+<h2>Mina snyltade prylar</h2>
 
 @{
     int i = 0;
@@ -113,7 +74,7 @@
 
 }
 
-    <h2>Mina outnyttjade saker</h2>
+    <h2>Mina outnyttjade prylar</h2>
 
 @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
 
@@ -124,10 +85,11 @@
     <!-- Card -->
     <a data-toggle="modal" data-target="#@cardId">
         <div class="card d-inline-block" style="width: 18rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
+            <img src="@thing.ThingPic" class="card-img-top" width="200"> @*alt="..."*@
             <div class="card-body">
                 <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
+                <p class="card-text"><strong>Beskrivning: </strong>@thing.Description</p>
+
                 @*<a href="#" class="btn btn-primary">Snylta</a>*@
             </div>
         </div>
@@ -148,9 +110,9 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col-md-6">
-                                <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                <img src="@thing.ThingPic" class="card-img-top" width="200">
                                 <div class="card-body">
-                                    <p>@thing.Id</p>
+                                    <p>@thing.Description</p>
                                 </div>
                                 
 

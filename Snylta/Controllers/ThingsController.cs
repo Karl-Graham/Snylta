@@ -73,10 +73,11 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Thing thing)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing)
         {
             if (ModelState.IsValid)
             {
+
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 _context.Add(thing);
