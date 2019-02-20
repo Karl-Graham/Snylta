@@ -39,9 +39,9 @@ namespace Snylta
             {
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"));
+
                 options.UseLazyLoadingProxies().UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=aspnet-Snylta-44C862B7-7B08-4715-A87E-03C2220B366B;Trusted_Connection=True;MultipleActiveResultSets=true");
-            }
-                );
+            });
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 

@@ -37,8 +37,8 @@ namespace Snylta
         public async Task<IActionResult> MyThings()
         {
             User user = await _userManager.GetUserAsync(User);
-            var applicationDbContext = _context.Thing.Where(t => t.Owner.Id == user.Id);
-            return View(await applicationDbContext.ToListAsync());
+
+            return View(user.Things);
         }
 
 
