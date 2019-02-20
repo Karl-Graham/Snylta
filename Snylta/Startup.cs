@@ -13,6 +13,8 @@ using Snylta.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Snylta.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Snylta
 {
@@ -50,10 +52,20 @@ namespace Snylta
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
+            //Begär authentitaction som default. För att kringgå addare [AllowAnonymous] (Elin)
+            services.AddMvc(o =>
+            {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                o.Filters.Add(new AuthorizeFilter(policy));
+            });
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
