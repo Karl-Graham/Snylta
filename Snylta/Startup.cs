@@ -52,7 +52,7 @@ namespace Snylta
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
 
-            //Begär authentitaction som default. För att kringgå addare [AllowAnonymous] (Elin)
+            //Begär authenticaction som default. För att kringgå addare [AllowAnonymous] (Elin)
             services.AddMvc(o =>
             {
                 var policy = new AuthorizationPolicyBuilder()
