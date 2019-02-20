@@ -2,49 +2,58 @@
 
 <h2>@ViewData["Title"]</h2>
 
-@{
-    int i = 0;
-}
-
-@foreach (var thing in Model)
+@if (Model.Count() > 0)
 {
-    i++;
-    var cardId = "card" + i;
+    int i = 0;
+
+    @foreach (var thing in Model)
+    {
+        var cardId = "card" + i;
 
     <!-- Card -->
     <a data-toggle="modal" data-target="#@cardId">
-        <div class="card d-inline-block" style="width: 18rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-                @*<a href="#" class="btn btn-primary">Snylta</a>*@
-            </div>
-        </div>
+        @await Component.InvokeAsync("Card", thing)
     </a>
 
-    <!-- Modal -->
-    <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        @**@
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    @thing.Name
-                    <a asp-action="Snylta" asp-route-id="@thing.Id" class="btn btn-primary">Snylta</a>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+        <!-- Modal -->
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <div class="card-body">
+                                        <p>@thing.Id</p>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <p>Snyltad av: @thing.Owner.UserName</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <h6>Endast utlånare kan avsluta en snyltning</h6>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
+        i++;
+    }
 }
-
+else
+{
+    <p>Du har väl inte gått och köpt något som du kunde snylta?</p>
+}

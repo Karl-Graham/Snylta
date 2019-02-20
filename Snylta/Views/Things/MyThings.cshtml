@@ -4,172 +4,123 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Mina Prylar</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                Snyltad
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @{var b = item.Snyltningar.Any(x => x.Active);}
-                    @b
-                </td>
+@{int i = 0;}
 
-                <td>
-
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-
-                </td>
-
-            </tr>
-        }
-    </tbody>
-</table>
-
-
-<h2>Mina Snyltade Saker</h2>
-
-@{
-    int i = 0;
-}
-
-@foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
-
+@if (Model.Where(t => t.Snyltningar.Any(s => s.Active)).Count() > 0)
 {
-    i++;
-    var cardId = "card" + i;
+    <h2>Mina Snyltade Saker</h2>
 
-    <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        <div class="card d-inline-block" style="width: 18rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-                @*<a href="#" class="btn btn-primary">Snylta</a>*@
-            </div>
-        </div>
-    </a>
+    @foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
 
-    <!-- Modal -->
-    <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        @**@
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
-                                <div class="card-body">
-                                    <p>@thing.Id</p>
+    {
+        var cardId = "card" + i;
+
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            @await Component.InvokeAsync("Card", thing)
+        </a>
+
+        <!-- Modal -->
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <div class="card-body">
+                                        <p>@thing.Id</p>
+                                    </div>
+                                    @thing.Name
+
                                 </div>
-                                @thing.Name
-
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card-body">
-                                    <h4>Snyltad av</h4>
-                                    <p>@thing.Snyltningar.FirstOrDefault(s => s.Active).Snyltare.UserName</p>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <h4>Snyltad av</h4>
+                                        <p>@thing.Snyltningar.FirstOrDefault(s => s.Active).Snyltare.UserName</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <a asp-action="AvSnylta" asp-route-id="@thing.Id" class="btn btn-primary">AvSnylta</a>
+                    <div class="modal-footer">
+                        <a asp-action="AvSnylta" asp-route-id="@thing.Id" class="btn btn-primary">AvSnylta</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
+        i++;
+    }
 }
 
-    <h2>Mina outnyttjade saker</h2>
-
-@foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
-
+@if (Model.Where(t => t.Snyltningar.All(s => !s.Active)).Count() > 0)
 {
-    i++;
-    var cardId = "card" + i;
 
-    <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        <div class="card d-inline-block" style="width: 18rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-                @*<a href="#" class="btn btn-primary">Snylta</a>*@
-            </div>
-        </div>
-    </a>
+    <h2>Mina outnyttjade prylar</h2>
 
-    <!-- Modal -->
-    <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        @**@
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
-                                <div class="card-body">
-                                    <p>@thing.Id</p>
+    @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
+    {
+        var cardId = "card" + i;
+
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            @await Component.InvokeAsync("Card", thing)
+        </a>
+
+        <!-- Modal -->
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <div class="card-body">
+                                        <p>@thing.Id</p>
+                                        <p>@thing.Description</p>
+
+                                    </div>
+
+
                                 </div>
-                                
-
-                            </div>
-                            <div class="col-md-6">
-                                <div class="card-body">
-                                    <p>Sprid ordet om Snylta så dina saker inte behöver ligga hemma och skräpa.</p>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <p>Sprid ordet om Snylta så dina saker inte behöver ligga hemma och skräpa.</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Delete</a>
+                    <div class="modal-footer">
+                        <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Delete</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        i++;
+    }
 
+}
+
+@if (i == 0)
+{
+    <p>Inte kan det vara så att du inte har något som andra kan snylta?</p>
 }
 
