@@ -1,9 +1,11 @@
 ﻿@model Thing
 
-    <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
-        <img src="~/thingimages/@Model.ThingPic" class="card-img-top" width="200"> @*alt="..."*@
-        <div class="card-body">
-            <h5 class="card-title">@Model.Name</h5>
-            <p class="card-text">@Model.Id</p>
-        </div>
+<div class="card d-inline-block" aria-disabled="true" style="width: 230px; height: 24rem;">
+    <object data="~/thingimages/@Model.ThingPic"  width="230" type="image/jpg">
+        <img src="~/fallback.png" width="230">
+    </object>
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <p class="card-text">@Model.Id</p>
     </div>
+</div>
