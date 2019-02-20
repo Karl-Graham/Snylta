@@ -28,9 +28,8 @@ namespace Snylta
         public async Task<IActionResult> Index()
         {
             User user = await _userManager.GetUserAsync(User);
-            var applicationDbContext = _context.Thing.Where(t => t.Owner.Id != user.Id);
+            var applicationDbContext = _context.Thing.Include(x=> x.Snyltningar).Where(t => t.Owner.Id != user.Id);
             
-            ViewData["Title"] = "SnyltIndex";
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -171,7 +170,6 @@ namespace Snylta
             return RedirectToAction(nameof(Index));
         }
 
-        //ANVÄNDS BARA I TESTNINGSSYFTE, KAN TAS BORT
         public async Task<IActionResult> Snyltningar(string id) 
         {
             User user = await _userManager.GetUserAsync(User);
