@@ -4,34 +4,39 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>Edit</h2>
+<h2>Ändra</h2>
 
-<h4>Thing</h4>
+<h4>Pryl</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserId" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserId" class="control-label"></label>
-                <select asp-for="UserId" class="form-control" asp-items="ViewBag.UserId"></select>
-                <span asp-validation-for="UserId" class="text-danger"></span>
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <p>Ladda upp en eller flera bilder:</p>
+                <input type="file" name="files" multiple />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Spara ändringar" class="btn btn-default" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Tillbaka till prylarna</a>
 </div>
 
 @section Scripts {

@@ -80,7 +80,7 @@ namespace Snylta
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
         {
-            var file = files.First();
+            //var file = files.First();
 
             if (ModelState.IsValid)
             {
@@ -94,21 +94,29 @@ namespace Snylta
 
                 // full path to file in temp location
 
-                var fileName = Guid.NewGuid().ToString() + file.FileName;
+                var thingGuid = Guid.NewGuid().ToString();
+
+                foreach (var file in files)
+                {
+
+                var fileName = thingGuid + file.FileName;
                 var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+                
 
                 if (file.Length > 0)
                 {
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
+
                     }
 
-                    thing.ThingPic = fileName;
-                    _context.Thing.Add(thing);
-                }
-                
+                        thing.ThingPic = fileName;
+                        _context.Thing.Add(thing);
+                    }
 
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -129,6 +137,7 @@ namespace Snylta
             {
                 return NotFound();
             }
+        
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
         }
@@ -138,7 +147,7 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId")] Thing thing)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files)
         {
             if (id != thing.Id)
             {
@@ -147,6 +156,29 @@ namespace Snylta
 
             if (ModelState.IsValid)
             {
+                var thingGuid = Guid.NewGuid().ToString();
+
+                foreach (var file in files)
+                {
+
+                    var fileName = thingGuid + file.FileName;
+                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+
+
+                    if (file.Length > 0)
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+
+                        }
+
+                        thing.ThingPic = fileName;
+                    }
+
+                }
+
                 try
                 {
                     _context.Update(thing);
@@ -163,6 +195,7 @@ namespace Snylta
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);

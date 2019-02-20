@@ -34,7 +34,7 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <img src="~/thingimages/@thing.ThingPic" class="card-img-top" width="200">
                                     <div class="card-body">
                                         <p>@thing.Id</p>
                                     </div>
@@ -88,9 +88,9 @@
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <img src="~/thingimages/@thing.ThingPic" class="card-img-top" width="200">
                                     <div class="card-body">
-                                        <p>@thing.Id</p>
+                                        <p>@thing.Name</p>
                                         <p>@thing.Description</p>
 
                                     </div>
@@ -106,8 +106,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Edit</a>
-                        <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Delete</a>
+                        <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Ändra</a>
+                        <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Ta bort</a>
                     </div>
                 </div>
             </div>
