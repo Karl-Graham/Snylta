@@ -80,7 +80,7 @@ namespace Snylta
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
         {
-            var file = files.First();
+            //var file = files.First();
 
             if (ModelState.IsValid)
             {
@@ -94,24 +94,29 @@ namespace Snylta
 
                 // full path to file in temp location
 
-                var fileName = Guid.NewGuid().ToString() + file.FileName;
+                var thingGuid = Guid.NewGuid().ToString();
+
+                foreach (var file in files)
+                {
+
+                var fileName = thingGuid + file.FileName;
                 var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
-                
 
-                if (file.Length > 0)
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+
+                    if (file.Length > 0)
                     {
-                        await file.CopyToAsync(stream);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
 
+                        }
+
+                        thing.ThingPic = fileName;
+                        _context.Thing.Add(thing);
                     }
 
-                    thing.ThingPic = fileName;
-                    _context.Thing.Add(thing);
                 }
-                
-
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
