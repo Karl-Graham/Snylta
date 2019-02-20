@@ -17,11 +17,11 @@ namespace Snylta.Models
         public string Name { get; set; }
 
         //Nytt
-        //[Required]
+        [Required]
         [Display(Name="Ladda upp bild")]
         public byte[] ThingPic { get; set; }
 
-        //[Required]
+        [Required]
         [Display(Name = "Beskrivning")]
         public string Description { get; set; }
         //
