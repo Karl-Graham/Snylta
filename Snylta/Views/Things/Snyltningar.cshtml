@@ -13,14 +13,7 @@
 
     <!-- Card -->
     <a data-toggle="modal" data-target="#@cardId">
-        <div class="card d-inline-block" style="width: 18rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-                @*<a href="#" class="btn btn-primary">Snylta</a>*@
-            </div>
-        </div>
+        @await Component.InvokeAsync("Card", thing)
     </a>
 
     <!-- Modal -->

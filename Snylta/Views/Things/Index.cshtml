@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
+
 <h2>@ViewData["Title"]</h2>
 @{int i = 0;}
 
@@ -11,15 +12,8 @@
 
     <!-- Card -->
     <a data-toggle="modal" data-target="#@cardId">
-        <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-            </div>
-        </div>
+        @await Component.InvokeAsync("Card", thing)
     </a>
-
 
     <!-- Modal -->
     <div class="modal fade " id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -43,11 +37,10 @@
 
                             </div>
                             <div class="col-md-6">
-                                col-md-6
+
                             </div>
                         </div>
                     </div>
-
 
 
                 </div>
