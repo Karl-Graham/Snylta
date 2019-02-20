@@ -17,10 +17,10 @@
     {
         var cardId = "card" + i;
 
-    <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        @await Component.InvokeAsync("Card", thing)
-    </a>
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            @await Component.InvokeAsync("Card", thing)
+        </a>
 
         <!-- Modal -->
         <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -62,37 +62,40 @@
     }
 }
 
+@if (Model.Where(t => t.Snyltningar.All(s => !s.Active)).Count() > 0)
+{
+
     <h2>Mina outnyttjade prylar</h2>
 
     @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
     {
         var cardId = "card" + i;
 
-    <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        @await Component.InvokeAsync("Card", thing)
-    </a>
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            @await Component.InvokeAsync("Card", thing)
+        </a>
 
-    <!-- Modal -->
-    <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
-                                <div class="card-body">
-                                    <p>@thing.Id</p>
-<p>@thing.Description</p>
+        <!-- Modal -->
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <div class="card-body">
+                                        <p>@thing.Id</p>
+                                        <p>@thing.Description</p>
 
-                                </div>
+                                    </div>
 
 
                                 </div>
@@ -114,9 +117,10 @@
         i++;
     }
 
+}
 
 @if (i == 0)
 {
-        <p>Inte kan det vara så att du inte har något som andra kan snylta?</p>
+    <p>Inte kan det vara så att du inte har något som andra kan snylta?</p>
 }
 
