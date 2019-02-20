@@ -4,7 +4,7 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Mina Prylar</h2>
 
 @{int i = 0;}
 
@@ -78,7 +78,7 @@
     <!-- Card -->
     <a data-toggle="modal" data-target="#@cardId">
         <div class="card d-inline-block" style="width: 18rem;">
-            <img src="@https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
+            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
             <div class="card-body">
                 <h5 class="card-title">@thing.Name</h5>
                 <p class="card-text"><strong>Beskrivning: </strong>@thing.Description</p>
@@ -90,7 +90,6 @@
 
     <!-- Modal -->
     <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        @**@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -129,7 +128,7 @@
         </div>
         i++;
     }
-}
+
 
 @if (i == 0)
 {
