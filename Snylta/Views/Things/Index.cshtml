@@ -1,80 +1,89 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
 <h2>@ViewData["Title"]</h2>
-@{int i = 0;}
 
-
-<!-- Tillgängliga prylar -->
-@foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
+@if (Model.Where(t => t.Snyltningar.All(s => !s.Active)).Count() > 0)
 {
-    var cardId = "card" + i;
 
-    <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="card-text"><strong>ID: </strong>@thing.Id</p>
-            </div>
-        </div>
-    </a>
+    int i = 0;
 
 
-    <!-- Modal -->
-    <div class="modal fade " id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+    <!-- Tillgängliga prylar -->
+    @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
+    {
+        var cardId = "card" + i;
+
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
+                <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200"> @*alt="..."*@
+                <div class="card-body">
+                    <h5 class="card-title">@thing.Name</h5>
+                    <p class="card-text"><strong>ID: </strong>@thing.Id</p>
                 </div>
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
-                                <div class="card-body">
-                                    <p>@thing.Id</p>
-                                </div>
-                                @thing.Name
+            </div>
+        </a>
 
-                            </div>
-                            <div class="col-md-6">
-                                col-md-6
+
+        <!-- Modal -->
+        <div class="modal fade " id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@thing.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <img src="https://source.unsplash.com/random/200x100" class="card-img-top" width="200">
+                                    <div class="card-body">
+                                        <p>@thing.Id</p>
+                                    </div>
+                                    @thing.Name
+
+                                </div>
+                                <div class="col-md-6">
+                                    col-md-6
+                                </div>
                             </div>
                         </div>
+
+
+
                     </div>
-
-
-
-                </div>
-                <div class="modal-footer">
-                    <a asp-action="Snylta" asp-route-id="@thing.Id" class="btn btn-primary">Snylta</a>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div class="modal-footer">
+                        <a asp-action="Snylta" asp-route-id="@thing.Id" class="btn btn-primary">Snylta</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    i++;
+        i++;
+
+    }
+
+
+    @foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
+    {
+        <!-- Card -->
+        <div class="card d-inline-block" style="width: 18rem; height: 24rem;">
+            <div class="disabled">
+                <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200">  @*alt="..."*@
+                <div class="card-body">
+                    <h5 class="card-title">@thing.Name</h5>
+                    <p class="text-danger">Denna prylen är tyvärr redan snyltad!</p>
+                </div>
+            </div>
+        </div>
+    }
 
 }
-
-
-@foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
+else
 {
-    <!-- Card -->
-    <div class="card d-inline-block" style="width: 18rem; height: 24rem;">
-        <div class="disabled">
-            <img src="https://source.unsplash.com/random/286x180" class="card-img-top" width="200">  @*alt="..."*@
-            <div class="card-body">
-                <h5 class="card-title">@thing.Name</h5>
-                <p class="text-danger">Denna prylen är tyvärr redan snyltad!</p>
-            </div>
-        </div>
-    </div>
+    <p>Dina gruppvänner har tyvärr inte gjort sina saker tillgängliga för snyltning. Det är legitimt att tjata om det är för en god sak, som att rädda planeten.</p>
 }
-
