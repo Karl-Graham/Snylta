@@ -23,9 +23,10 @@ namespace Snylta.Services
         {
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
             {
-            VisualFeatureTypes.Categories, VisualFeatureTypes.Description,
-            VisualFeatureTypes.Faces, VisualFeatureTypes.ImageType,
-            VisualFeatureTypes.Tags, VisualFeatureTypes.Objects
+            //VisualFeatureTypes.Categories, VisualFeatureTypes.Description,
+            //VisualFeatureTypes.Faces, VisualFeatureTypes.ImageType,
+            //VisualFeatureTypes.Objects,
+            VisualFeatureTypes.Tags
             };
 
             ComputerVisionClient computerVision = new ComputerVisionClient(
@@ -58,10 +59,14 @@ namespace Snylta.Services
                 }
 
             }
+            var GoodEnoughTags = new List<string>();
+            foreach (var item in analysises)
+            {
+                GoodEnoughTags.AddRange(item.Tags.Where(x => x.Confidence > 0.1).Select(x => x.Name));
+            }
+           
 
-            analysises.Select(a => a.Tags.Where(t => t.Confidence > 0.5).Select(t => t.Name));
-
-            return EnglishTags;
+            return GoodEnoughTags;
 
 
         }
