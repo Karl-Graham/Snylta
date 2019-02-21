@@ -36,11 +36,11 @@
                                 <div class="col-md-6">
                                     @if (thing.ThingPics.Count() == 0)
                                     {
-                                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200"/>
                                     }
                                     else
                                     {
-                                        <img class="card-img-top rounded-top" src="~/thingimages/@thing.ThingPics[0].Pic"  width="200" />
+                                        <img class="card-img-top rounded-top" src="~/thingimages/@thing.ThingPics[0].Pic" width="200"/>
 
                                     }
                                     <div class="card-body">
@@ -122,10 +122,11 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Ändra</a>
-                        <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Ta bort</a>
+                       
+                            <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Ändra</a>
+                            <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Ta bort</a>
                     </div>
-                </div>
+	            </div>
             </div>
         </div>
         i++;
