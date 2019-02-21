@@ -44,7 +44,7 @@
                 <div id="my_camera"></div>
                 <!-- A button for taking snaps -->
                 <form>
-                    <input type="button" class="btn btn-success" value="Take Snapshot" onClick="take_snapshot()">
+                    <input type="button" class="btn btn-success" value="Ta bild" onClick="take_snapshot()">
                 </form>
 
             </div>
@@ -77,23 +77,21 @@
             var x = document.getElementById("myDIV");
             if (x.style.display === "none") {
                 x.style.display = "block";
+            Webcam.set({
+                width: 320,
+                height: 240,
+                image_format: 'jpeg',
+                jpeg_quality: 90
+            });
+            Webcam.attach('#my_camera');
             } else {
                 x.style.display = "none";
+                Webcam.reset();
             }
         }
     </script>
-
     <script src="~/js/webcamjs-master/webcam.js"></script>
-    <!-- Configure a few settings and attach camera -->
-    <script language="JavaScript">
-        Webcam.set({
-            width: 320,
-            height: 240,
-            image_format: 'jpeg',
-            jpeg_quality: 90
-        });
-        Webcam.attach('#my_camera');
-    </script>
+
     <!-- Code to handle taking the snapshot and displaying it locally -->
     <script language="JavaScript">
         function take_snapshot() {
@@ -110,7 +108,6 @@
                     function (code, text) {
                         alert('Photo Captured');
                     });
-
             });
         }
     </script>
