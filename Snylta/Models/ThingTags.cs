@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Snylta.Models
 {
-    public class ThingPic
+    public class ThingTags
     {
-        public string Id { get; set; }
-        public string Pic { get; set; }
         public string ThingId { get; set; }
+        public virtual Thing Thing { get; set; }
+
+        public string TagId { get; set; }
+        public virtual Tag Tag { get; set; }
+
     }
 }
