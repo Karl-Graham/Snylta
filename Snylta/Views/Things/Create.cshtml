@@ -32,10 +32,86 @@
     </div>
 </div>
 
+<button onclick="myFunction()">Ta en bild</button>
+
+<div id="myDIV" style="display: none">
+
+    <div class="col-md-2"></div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Camera</div>
+            <div class="panel-body">
+                <div id="my_camera"></div>
+                <!-- A button for taking snaps -->
+                <form>
+                    <input type="button" class="btn btn-success" value="Take Snapshot" onClick="take_snapshot()">
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Captured Photo</div>
+            <div class="panel-body">
+                <div id="results">Your captured image will appear here...</div>
+            </div>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
+
 <div>
     <a asp-action="Index">Tillbaka till prylarna</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+   
+    <script>
+        function myFunction() {
+
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+
+    <script src="~/js/webcamjs-master/webcam.js"></script>
+    <!-- Configure a few settings and attach camera -->
+    <script language="JavaScript">
+        Webcam.set({
+            width: 320,
+            height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 90
+        });
+        Webcam.attach('#my_camera');
+    </script>
+    <!-- Code to handle taking the snapshot and displaying it locally -->
+    <script language="JavaScript">
+        function take_snapshot() {
+            // take snapshot and get image data
+            Webcam.snap(function (data_uri) {
+                // display results in page
+                document.getElementById('results').innerHTML =
+                    '<img src="' +
+                    data_uri +
+                    '"/>';
+
+                Webcam.upload(data_uri,
+                    '/Things/Capture',
+                    function (code, text) {
+                        alert('Photo Captured');
+                    });
+
+            });
+        }
+    </script>
 }

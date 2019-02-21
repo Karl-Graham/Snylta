@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Services\" />
+    <Folder Include="wwwroot\CameraPhotos\" />
     <Folder Include="wwwroot\thingimages\" />
   </ItemGroup>
 
