@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Snylta.Services;
 
 namespace Snylta
 {
@@ -20,20 +21,22 @@ namespace Snylta
         private readonly IHostingEnvironment _host;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
+        private readonly TranslationService _translationService;
 
-        public ThingsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment host)
+        public ThingsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService)
         {
             _host = host;
             _context = context;
             _userManager = userManager;
+            _translationService = translationService;
         }
 
         // GET: Things
         public async Task<IActionResult> Index()
         {
             User user = await _userManager.GetUserAsync(User);
-            var applicationDbContext = _context.Thing.Include(x=> x.Snyltningar).Where(t => t.Owner.Id != user.Id);
-            
+            var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -93,7 +96,7 @@ namespace Snylta
                 //---Lägga till bild
 
                 // full path to file in temp location
-                
+
                 var thingGuid = Guid.NewGuid().ToString();
 
                 var picList = new List<ThingPic>();
@@ -104,7 +107,7 @@ namespace Snylta
                     var fileName = thingGuid + file.FileName.ToString();
                     var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
-                
+
 
                     if (file.Length > 0)
                     {
@@ -144,7 +147,7 @@ namespace Snylta
             {
                 return NotFound();
             }
-        
+
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
         }
@@ -241,10 +244,10 @@ namespace Snylta
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Snyltningar(string id) 
+        public async Task<IActionResult> Snyltningar(string id)
         {
             User user = await _userManager.GetUserAsync(User);
-            return View(user.Snyltningar.Where(x => x.Active).Select(x=> x.Thing).ToList());
+            return View(user.Snyltningar.Where(x => x.Active).Select(x => x.Thing).ToList());
         }
 
         public async Task<IActionResult> Snylta(string id)
@@ -284,6 +287,11 @@ namespace Snylta
         private bool ThingExists(string id)
         {
             return _context.Thing.Any(e => e.Id == id);
+        }
+
+        public IActionResult Translate()
+        {
+            return Ok(_translationService.TranslateText("hello"));
         }
     }
 }
