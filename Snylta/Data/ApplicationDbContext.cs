@@ -35,5 +35,6 @@ namespace Snylta.Data
         public DbSet<Snylta.Models.Thing> Thing { get; set; }
 
         public DbSet<Snylta.Models.Snyltning> Snyltning { get; set; }
+        public DbSet<Snylta.Models.ThingPic> ThingPic { get; set; }
     }
 }

@@ -78,7 +78,7 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Name,Description")] Thing thing, List<IFormFile> files)
         {
             //var file = files.First();
 
@@ -87,8 +87,9 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                _context.Add(thing);
+               // _context.Add(thing);
                 ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+
 
                 //---Lägga till bild
 
@@ -98,7 +99,7 @@ namespace Snylta
 
                 foreach (var file in files)
                 {
-
+                    ThingPic thingPic = new ThingPic();
                 var fileName = thingGuid + file.FileName;
                 var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
@@ -111,9 +112,12 @@ namespace Snylta
                         await file.CopyToAsync(stream);
 
                     }
+                        thingPic.FileName = fileName;
+                        //thingPic.ThingId = thing.Id;
+                        thingPic.Thing = thing;
+                        //thing.ThingPics = fileName;
 
-                        thing.ThingPic = fileName;
-                        _context.Thing.Add(thing);
+                        _context.ThingPic.Add(thingPic);
                     }
 
                 }
