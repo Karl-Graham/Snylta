@@ -16,13 +16,11 @@ namespace Snylta.Models
         [Display(Name="Pryl")]
         public string Name { get; set; }
 
-        //Nytt
         [Display(Name="Ladda upp bild")]
-        public virtual ICollection<ThingPic> ThingPics { get; set; }
+        public virtual List<ThingPic> ThingPics { get; set; }
 
         [Display(Name = "Beskrivning")]
         public string Description { get; set; }
-        //
 
         public virtual ICollection<GroupThings> GroupThings { get; set; }
 

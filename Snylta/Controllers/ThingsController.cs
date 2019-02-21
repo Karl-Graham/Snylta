@@ -78,7 +78,7 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description")] Thing thing, List<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
         {
             //var file = files.First();
 
@@ -87,40 +87,43 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-               // _context.Add(thing);
+                _context.Add(thing);
                 ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
-
 
                 //---Lägga till bild
 
                 // full path to file in temp location
-
+                
                 var thingGuid = Guid.NewGuid().ToString();
 
+                var picList = new List<ThingPic>();
                 foreach (var file in files)
                 {
-                    ThingPic thingPic = new ThingPic();
-                var fileName = thingGuid + file.FileName;
-                var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+                    var pic = new ThingPic();
+
+                    var fileName = thingGuid + file.FileName.ToString();
+                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
                 
 
-                if (file.Length > 0)
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (file.Length > 0)
                     {
-                        await file.CopyToAsync(stream);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
 
-                    }
-                        thingPic.FileName = fileName;
-                        //thingPic.ThingId = thing.Id;
-                        thingPic.Thing = thing;
-                        //thing.ThingPics = fileName;
+                        }
 
-                        _context.ThingPic.Add(thingPic);
+                        pic.Pic = fileName;
+                        picList.Add(pic);
+                        _context.ThingPic.Add(pic);
+
                     }
 
                 }
+
+                thing.ThingPics = picList;
+                _context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -141,6 +144,7 @@ namespace Snylta
             {
                 return NotFound();
             }
+        
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
         }
@@ -150,7 +154,7 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId")] Thing thing)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files)
         {
             if (id != thing.Id)
             {
@@ -159,8 +163,31 @@ namespace Snylta
 
             if (ModelState.IsValid)
             {
+                var thingGuid = Guid.NewGuid().ToString();
+
+                var picList = new List<ThingPic>();
+                foreach (var file in files)
+                {
+                    var pic = new ThingPic();
+
+                    var fileName = thingGuid + file.FileName.ToString();
+                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+                    if (file.Length > 0)
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        pic.Pic = fileName;
+                        picList.Add(pic);
+                    }
+                }
+
                 try
                 {
+                    thing.ThingPics = picList;
                     _context.Update(thing);
                     await _context.SaveChangesAsync();
                 }
@@ -175,6 +202,7 @@ namespace Snylta
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
@@ -206,6 +234,9 @@ namespace Snylta
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var thing = await _context.Thing.FindAsync(id);
+            //var thingpic = await _context.ThingPic.FindAsync(id);
+
+            _context.ThingPic.Remove(await _context.ThingPic.FindAsync(id));
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

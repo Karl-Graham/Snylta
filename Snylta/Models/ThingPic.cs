@@ -7,9 +7,8 @@ namespace Snylta.Models
 {
     public class ThingPic
     {
-        public string Id { get; set; }
-        public string FileName { get; set; }
+        public int Id { get; set; }
+        public string Pic { get; set; }
         public string ThingId { get; set; }
-        public virtual Thing Thing { get; set; }
     }
 }
