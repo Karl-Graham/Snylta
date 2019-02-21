@@ -227,7 +227,6 @@ namespace Snylta
             {
                 return NotFound();
             }
-
             return View(thing);
         }
 

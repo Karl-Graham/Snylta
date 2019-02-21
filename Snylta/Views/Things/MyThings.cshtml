@@ -115,30 +115,16 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
-                                        @if (true)
-                                        {
-                                            <p>Sprid ordet om Snylta så dina saker inte behöver ligga hemma och skräpa.</p>
-                                        }
-                                        else
-                                        {
-                                            <p>Är du helt säker på att du vill ta bort din pryl?</p>
-                                        }
+                                        <p>Sprid ordet om Snylta så dina saker inte behöver ligga hemma och skräpa.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        @if (true)
-                        {
+                       
                             <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Ändra</a>
                             <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Ta bort</a>
-                        }
-                        else
-                        {
-                            <a asp-action="DeleteConfirmation" asp-route-id="@thing.Id" class="btn btn-primary">Ja</a>
-                            <a asp-action="MyThings" @*asp-route-id="@thing.Id"*@ class="btn btn-primary">Nej</a>
-                        }
                     </div>
 	            </div>
             </div>
