@@ -9,17 +9,21 @@ using Snylta.Data;
 using Snylta.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace Snylta
 {
     public class ThingsController : Controller
     {
+        private readonly IHostingEnvironment _host;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
 
-        public ThingsController(ApplicationDbContext context, UserManager<User> userManager)
+        public ThingsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment host)
         {
+            _host = host;
             _context = context;
             _userManager = userManager;
         }
@@ -60,6 +64,8 @@ namespace Snylta
             return View(thing);
         }
 
+
+
         // GET: Things/Create
         public IActionResult Create()
         {
@@ -72,18 +78,56 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
         {
+            //var file = files.First();
+
             if (ModelState.IsValid)
             {
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 _context.Add(thing);
+                ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+
+                //---Lägga till bild
+
+                // full path to file in temp location
+                
+                var thingGuid = Guid.NewGuid().ToString();
+
+                var picList = new List<ThingPic>();
+                foreach (var file in files)
+                {
+                    var pic = new ThingPic();
+
+                    var fileName = thingGuid + file.FileName.ToString();
+                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+                
+
+                    if (file.Length > 0)
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+
+                        }
+
+                        pic.Pic = fileName;
+                        picList.Add(pic);
+                        _context.ThingPic.Add(pic);
+
+                    }
+
+                }
+
+                thing.ThingPics = picList;
+                _context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+
             return View(thing);
         }
 
@@ -100,6 +144,7 @@ namespace Snylta
             {
                 return NotFound();
             }
+        
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
         }
@@ -109,7 +154,7 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId")] Thing thing)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files)
         {
             if (id != thing.Id)
             {
@@ -118,8 +163,31 @@ namespace Snylta
 
             if (ModelState.IsValid)
             {
+                var thingGuid = Guid.NewGuid().ToString();
+
+                var picList = new List<ThingPic>();
+                foreach (var file in files)
+                {
+                    var pic = new ThingPic();
+
+                    var fileName = thingGuid + file.FileName.ToString();
+                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+                    if (file.Length > 0)
+                    {
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        pic.Pic = fileName;
+                        picList.Add(pic);
+                    }
+                }
+
                 try
                 {
+                    thing.ThingPics = picList;
                     _context.Update(thing);
                     await _context.SaveChangesAsync();
                 }
@@ -134,6 +202,7 @@ namespace Snylta
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
@@ -165,6 +234,9 @@ namespace Snylta
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var thing = await _context.Thing.FindAsync(id);
+            //var thingpic = await _context.ThingPic.FindAsync(id);
+
+            _context.ThingPic.Remove(await _context.ThingPic.FindAsync(id));
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -182,17 +254,17 @@ namespace Snylta
             Thing thing = _context.Thing.FirstOrDefault(x => x.Id == id);
 
             //Kontrollerar att prylen är tillgänglig och att den får lånas av användaren
-                if (thing == null)
-                    return BadRequest($"Hittade ingen pryl med id {id}");
+            if (thing == null)
+                return BadRequest($"Hittade ingen pryl med id {id}");
 
-                if (thing.Snyltningar.Any(x => x.Active))
-                    if (thing.Snyltningar.FirstOrDefault(x => x.Active).Snyltare == user)
-                        return BadRequest($"Du snyltar redan prylen {thing.Name}");
-                    else
-                        return BadRequest($"Prylen {thing.Name} är redan snyltad");
+            if (thing.Snyltningar.Any(x => x.Active))
+                if (thing.Snyltningar.FirstOrDefault(x => x.Active).Snyltare == user)
+                    return BadRequest($"Du snyltar redan prylen {thing.Name}");
+                else
+                    return BadRequest($"Prylen {thing.Name} är redan snyltad");
 
-                if (thing.Owner == user)
-                    return BadRequest($"Du kan inte låna din egen pryl!");
+            if (thing.Owner == user)
+                return BadRequest($"Du kan inte låna din egen pryl!");
 
 
             _context.Add(new Snyltning(user.Id, thing.Id));
@@ -200,13 +272,13 @@ namespace Snylta
 
             return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
         }
-        
+
         public async Task<IActionResult> AvSnylta(string id)
         {
             var snyltning = _context.Snyltning.FirstOrDefault(x => x.ThingId == id && x.Active);
             snyltning.Active = false;
             _context.SaveChanges();
-            
+
             return RedirectToAction("MyThings");
         }
 
