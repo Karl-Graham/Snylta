@@ -1,19 +1,20 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
-<h2>@ViewData["Title"]</h2>
 
 @if (Model.Count() > 0)
 {
+    <h2>Mina pågående snyltningar</h2>
+
     int i = 0;
 
     @foreach (var thing in Model)
     {
         var cardId = "card" + i;
 
-    <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        @await Component.InvokeAsync("Card", thing)
-    </a>
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            @await Component.InvokeAsync("Card", thing)
+        </a>
 
         <!-- Modal -->
         <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
