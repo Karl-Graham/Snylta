@@ -25,6 +25,9 @@
                 <input type="file" name="files" multiple />
             </div>
 
+
+
+
             <div class="form-group">
                 <input type="submit" value="Skapa" class="btn btn-default" />
             </div>
@@ -87,7 +90,7 @@
                     '"/>';
 
                 Webcam.upload(data_uri,
-                    '/Camera/Capture',
+                    '/Things/Capture',
                     function (code, text) {
                         alert('Photo Captured');
                     });
