@@ -40,5 +40,8 @@ namespace Snylta.Data
         public DbSet<Snyltning> Snyltning { get; set; }
 
         public DbSet<ThingPic> ThingPic { get; set; }
+
+        public DbSet<Tag> Tag { get; set; }
+
     }
 }

@@ -127,13 +127,41 @@ namespace Snylta
                     }
 
                 }
+
                 var EnglishTagList = new List<string>();
                 var SwedishTagList = new List<string>();
 
                 EnglishTagList = await _imageTagGeneratorService.GetTagsForImages(filePaths);
-                
+                SwedishTagList = await _translationService.TranslateText(EnglishTagList.ToArray());
+
+                for (int i = 0; i < EnglishTagList.Count; i++)
+                {
+                    Tag tag;
+
+                    if(!_context.Tag.Any(t => t.EnglishTag == EnglishTagList[i]))
+                    {
+                        tag = new Tag()
+                        {
+                            EnglishTag = EnglishTagList[i],
+                            SwedishTag = SwedishTagList[i]
+                        };
+
+                        _context.Add(tag);
+                    }
+                    else
+                    {
+                        tag = _context.Tag.First(t => t.EnglishTag == EnglishTagList[i]);
+                    }
+
+                    var thingTag = new ThingTags()
+                    {
+                        TagId = tag.Id,
+                        ThingId = thing.Id
+                    };
+                    _context.Add(thingTag);
+                }
                 thing.ThingPics = picList;
-                _context.Thing.Add(thing);
+                //_context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
