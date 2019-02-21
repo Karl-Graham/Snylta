@@ -227,7 +227,6 @@ namespace Snylta
             {
                 return NotFound();
             }
-
             return View(thing);
         }
 
@@ -237,9 +236,8 @@ namespace Snylta
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var thing = await _context.Thing.FindAsync(id);
-            //var thingpic = await _context.ThingPic.FindAsync(id);
+            thing.ThingPics.RemoveAll(t => t.ThingId == id);
 
-            _context.ThingPic.Remove(await _context.ThingPic.FindAsync(id));
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -276,7 +274,7 @@ namespace Snylta
             return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
         }
 
-        public async Task<IActionResult> AvSnylta(string id)
+        public IActionResult AvSnylta(string id)
         {
             var snyltning = _context.Snyltning.FirstOrDefault(x => x.ThingId == id && x.Active);
             snyltning.Active = false;
@@ -290,9 +288,13 @@ namespace Snylta
             return _context.Thing.Any(e => e.Id == id);
         }
 
-        public IActionResult Translate()
+        public async Task<IActionResult> Translate()
         {
-            return Ok(_translationService.TranslateText("hello"));
+            var englishArray = new string[] { "tool", "hello" };
+
+            var swedishArray = await _translationService.TranslateText(englishArray);
+
+            return Ok(swedishArray);
         }
 
         [HttpPost]
