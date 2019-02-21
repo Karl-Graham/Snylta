@@ -17,7 +17,7 @@ namespace Snylta.Models
         public string Name { get; set; }
 
         [Display(Name="Ladda upp bild")]
-        public string ThingPic { get; set; }
+        public virtual List<ThingPic> ThingPics { get; set; }
 
         [Display(Name = "Beskrivning")]
         public string Description { get; set; }

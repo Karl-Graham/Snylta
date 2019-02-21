@@ -93,30 +93,37 @@ namespace Snylta
                 //---Lägga till bild
 
                 // full path to file in temp location
-
+                
                 var thingGuid = Guid.NewGuid().ToString();
 
+                var picList = new List<ThingPic>();
                 foreach (var file in files)
                 {
+                    var pic = new ThingPic();
 
-                var fileName = thingGuid + file.FileName;
-                var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+                    var fileName = thingGuid + file.FileName.ToString();
+                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
                 
 
-                if (file.Length > 0)
-                {
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (file.Length > 0)
                     {
-                        await file.CopyToAsync(stream);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
 
-                    }
+                        }
 
-                        thing.ThingPic = fileName;
-                        _context.Thing.Add(thing);
+                        pic.Pic = fileName;
+                        picList.Add(pic);
+                        _context.ThingPic.Add(pic);
+
                     }
 
                 }
+
+                thing.ThingPics = picList;
+                _context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -158,29 +165,29 @@ namespace Snylta
             {
                 var thingGuid = Guid.NewGuid().ToString();
 
+                var picList = new List<ThingPic>();
                 foreach (var file in files)
                 {
+                    var pic = new ThingPic();
 
-                    var fileName = thingGuid + file.FileName;
+                    var fileName = thingGuid + file.FileName.ToString();
                     var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
-
-
 
                     if (file.Length > 0)
                     {
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await file.CopyToAsync(stream);
-
                         }
 
-                        thing.ThingPic = fileName;
+                        pic.Pic = fileName;
+                        picList.Add(pic);
                     }
-
                 }
 
                 try
                 {
+                    thing.ThingPics = picList;
                     _context.Update(thing);
                     await _context.SaveChangesAsync();
                 }
@@ -227,6 +234,9 @@ namespace Snylta
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var thing = await _context.Thing.FindAsync(id);
+            //var thingpic = await _context.ThingPic.FindAsync(id);
+
+            _context.ThingPic.Remove(await _context.ThingPic.FindAsync(id));
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
