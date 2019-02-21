@@ -233,10 +233,10 @@ namespace Snylta
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            var thingpic = await _context.ThingPic.FindAsync(id);
             var thing = await _context.Thing.FindAsync(id);
-            //var thingpic = await _context.ThingPic.FindAsync(id);
 
-            _context.ThingPic.Remove(await _context.ThingPic.FindAsync(id));
+            _context.ThingPic.Remove(thingpic);
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
@@ -273,7 +273,7 @@ namespace Snylta
             return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
         }
 
-        public async Task<IActionResult> AvSnylta(string id)
+        public IActionResult AvSnylta(string id)
         {
             var snyltning = _context.Snyltning.FirstOrDefault(x => x.ThingId == id && x.Active);
             snyltning.Active = false;
