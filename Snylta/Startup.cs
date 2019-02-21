@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Snylta.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Snylta.Services;
 
 namespace Snylta
 {
@@ -60,6 +61,8 @@ namespace Snylta
                     .Build();
                 o.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            services.AddTransient<TranslationService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(
