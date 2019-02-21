@@ -63,6 +63,7 @@ namespace Snylta
             });
 
             services.AddTransient<TranslationService>();
+            services.AddTransient<ImageTagGeneratorService>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(

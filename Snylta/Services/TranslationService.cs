@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Snylta.Services
 {
     public class TranslationService
     {
+        
         public string TranslateText(string text)
         {
             string host = "https://api.cognitive.microsofttranslator.com";
