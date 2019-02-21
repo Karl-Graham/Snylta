@@ -233,10 +233,9 @@ namespace Snylta
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var thingpic = await _context.ThingPic.FindAsync(id);
             var thing = await _context.Thing.FindAsync(id);
+            thing.ThingPics.RemoveAll(t => t.ThingId == id);
 
-            _context.ThingPic.Remove(thingpic);
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

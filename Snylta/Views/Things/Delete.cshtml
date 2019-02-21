@@ -4,11 +4,11 @@
     ViewData["Title"] = "Delete";
 }
 
-<h2>Ta bort</h2>
+<h2>Ta bort pryl</h2>
 
-<h3>Är du säker på att du vill ta bort din pryl från Snylta?</h3>
+<h3>Är du helt säker på att du vill ta bort din pryl från Snylta?</h3>
 <div>
-    <h4>Thing</h4>
+    @*<h4>Pryl</h4>*@
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -17,17 +17,11 @@
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Owner)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Owner.Id)
-        </dd>
     </dl>
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Ta bort" class="btn btn-default" /> |
-        <a asp-action="Index">Tillbaka till rpylarna</a>
+        <a asp-action="Index">Tillbaka till prylarna</a>
     </form>
 </div>

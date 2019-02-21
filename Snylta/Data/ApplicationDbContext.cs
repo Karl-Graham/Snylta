@@ -33,12 +33,12 @@ namespace Snylta.Data
                 .HasKey(thingTags => new { thingTags.ThingId, thingTags.TagId });
         }
 
-        public DbSet<Snylta.Models.Group> Group { get; set; }
+        public DbSet<Group> Group { get; set; }
 
-        public DbSet<Snylta.Models.Thing> Thing { get; set; }
+        public DbSet<Thing> Thing { get; set; }
 
-        public DbSet<Snylta.Models.Snyltning> Snyltning { get; set; }
+        public DbSet<Snyltning> Snyltning { get; set; }
 
-        public DbSet<Snylta.Models.ThingPic> ThingPic { get; set; }
+        public DbSet<ThingPic> ThingPic { get; set; }
     }
 }
