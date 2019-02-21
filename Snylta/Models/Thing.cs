@@ -29,5 +29,8 @@ namespace Snylta.Models
 
         public virtual ICollection<Snyltning> Snyltningar { get; set; }
 
+        public virtual ICollection<ThingTags> ThingTags { get; set; }
+
+
     }
 }
