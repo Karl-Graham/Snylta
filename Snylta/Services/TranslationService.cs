@@ -10,13 +10,13 @@ namespace Snylta.Services
 {
     public class TranslationService
     {
-        public string TranslateText(string text)
+        public async Task<IEnumerable<string>> TranslateText(string[] words)
         {
             string host = "https://api.cognitive.microsofttranslator.com";
             string route = "/translate?api-version=3.0&from=en&to=sv";
             string subscriptionKey = "19e334b60be94395a5626903ab33256a";
 
-            var body = new[] { new { Text = text} };
+            var body = words.Select(word => new { Text = word });
 
             var requestBody = JsonConvert.SerializeObject(body);
 
@@ -35,12 +35,18 @@ namespace Snylta.Services
                 // Add the authorization header
                 request.Headers.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
 
+                using (HttpResponseMessage response = await client.SendAsync(request))
+                {
+                    var stringContet = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+                    IEnumerable<Translations> obj = JsonConvert.DeserializeObject<IEnumerable<Translations>>(stringContet);
+                    return obj.Select(x => x.translations.First().text);
+
+                }
+
                 // Send request, get response
-                var response = client.SendAsync(request).Result;
-                var jsonResponse = response.Content.ReadAsStringAsync().Result;
+                //var response = client.SendAsync(request).Result;
 
                 // Print the response
-                return jsonResponse;
             }
             /*
              * The code for your call to the translation service will be added to this

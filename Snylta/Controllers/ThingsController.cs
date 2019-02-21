@@ -290,9 +290,13 @@ namespace Snylta
             return _context.Thing.Any(e => e.Id == id);
         }
 
-        public IActionResult Translate()
+        public async Task<IActionResult> Translate()
         {
-            return Ok(_translationService.TranslateText("hello"));
+            var englishArray = new string[] { "tool", "hello" };
+
+            var swedishArray = await _translationService.TranslateText(englishArray);
+
+            return Ok(swedishArray);
         }
     }
 }
