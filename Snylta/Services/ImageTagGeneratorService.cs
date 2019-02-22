@@ -14,13 +14,13 @@ namespace Snylta.Services
     {
         private string subscriptionKey;
 
-        public ImageTagGeneratorService(APIKeys aPIKeys)
+        public ImageTagGeneratorService(AppSettings aPIKeys)
         {
-            subscriptionKey = aPIKeys.ComputerVision;
+            subscriptionKey = aPIKeys.ComputerVisionKey;
         }
 
 
-        internal async Task<List<string>> GetTagsForImages(List<string> filePaths)
+        internal async Task<List<ImageAnalysis>> GetTagsForImages(List<string> filePaths)
         {
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
             {
@@ -60,14 +60,10 @@ namespace Snylta.Services
                 }
 
             }
-            var GoodEnoughTags = new List<string>();
-            foreach (var item in analysises)
-            {
-                GoodEnoughTags.AddRange(item.Tags.Where(x => x.Confidence > 0.1).Select(x => x.Name));
-            }
+            
 
-
-            return GoodEnoughTags;
+            return analysises;
+            
 
 
         }
