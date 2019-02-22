@@ -91,7 +91,7 @@ namespace Snylta
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files, IFormFile webcamImg)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
         {
             //var file = files.First();
 
@@ -120,7 +120,7 @@ namespace Snylta
 
                     filePaths.Add(filePath);
 
-                    if (file.Length > 0 && file.Length < 100000)
+                    if (file.Length > 0 && file.Length < 10000000)
                     {
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
