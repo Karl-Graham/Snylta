@@ -34,12 +34,9 @@ namespace Snylta
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             //services.Configure<APIKeys>(Configuration.GetSection("APIKeys"));
+             
 
-            //var moviesConfig = Configuration.GetSection("APIKeys")
-            //                    .Get<APIKeys>();
-
-            APIKeys appConfiguration = Configuration.GetSection("APIKeys").Get<APIKeys>();
+            AppSettings appConfiguration = Configuration.GetSection("AppSettings").Get<AppSettings>();
             services.AddSingleton(appConfiguration);
 
             services.Configure<CookiePolicyOptions>(options =>
@@ -59,7 +56,7 @@ namespace Snylta
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentity<User, Roles>()
+            services.AddIdentity<User, Role>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();

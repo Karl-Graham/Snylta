@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Snylta.Services;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 
 namespace Snylta
 {
@@ -131,8 +132,11 @@ namespace Snylta
                 var EnglishTagList = new List<string>();
                 var SwedishTagList = new List<string>();
 
-                EnglishTagList = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+                var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+                EnglishTagList = GetTagsFromAnalysises(analysises);
+                var listOfconfidence = GetConfidencesFromAnalysises(analysises);
                 SwedishTagList = await _translationService.TranslateText(EnglishTagList.ToArray());
+
 
                 for (int i = 0; i < EnglishTagList.Count; i++)
                 {
@@ -156,7 +160,8 @@ namespace Snylta
                     var thingTag = new ThingTags()
                     {
                         TagId = tag.Id,
-                        ThingId = thing.Id
+                        ThingId = thing.Id,
+                        Confidence = listOfconfidence[i]
                     };
                     _context.Add(thingTag);
                 }
@@ -168,6 +173,37 @@ namespace Snylta
 
             return View(thing);
         }
+
+        private List<double> GetConfidencesFromAnalysises(List<ImageAnalysis> analysises)
+        {
+            var listOfConfidence = new List<double>();
+
+            foreach (var analysis in analysises)
+                listOfConfidence.AddRange(analysis.Tags.Select(t => t.Confidence));
+
+            return listOfConfidence;
+        }
+
+        private List<string> GetTagsFromAnalysises(List<ImageAnalysis> analysises)
+        {
+            var tags = new List<String>();
+
+            foreach (var analysis in analysises)
+                tags.AddRange(analysis.Tags.Select(t => t.Name)); 
+            
+            return tags;
+        }
+
+        //private List<string> GoodEnoughTags(List<ImageAnalysis> analysises)
+        //{
+        //    var GoodEnoughTags = new List<string>();
+        //    foreach (var item in analysises)
+        //    {
+        //        GoodEnoughTags.AddRange(item.Tags.Where(x => x.Confidence > 0.1).Select(x => x.Name));
+        //    }
+
+        //    return GoodEnoughTags;
+        //}
 
         // GET: Things/Edit/5
         public async Task<IActionResult> Edit(string id)
