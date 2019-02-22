@@ -81,9 +81,16 @@ namespace Snylta
         // POST: Things/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [HttpPost]
+        public IActionResult Test(IFormFile snapPic)
+        {
+            return Ok(snapPic);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files, IFormFile webcamImg)
         {
             //var file = files.First();
 
@@ -112,7 +119,7 @@ namespace Snylta
 
                     filePaths.Add(filePath);
 
-                    if (file.Length > 0)
+                    if (file.Length > 0 && file.Length < 100000)
                     {
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
@@ -347,7 +354,9 @@ namespace Snylta
                         // Unique filename "Guid"  
                         var myUniqueFileName = Convert.ToString(Guid.NewGuid());
                         // Getting Extension  
-                        var fileExtension = Path.GetExtension(fileName);
+                        //var fileExtension = Path.GetExtension(fileName);
+                        var fileExtension = fileName;
+
                         // Concating filename + fileExtension (unique filename)  
                         var newFileName = string.Concat(myUniqueFileName, fileExtension);
                         //  Generating Path to store photo   
