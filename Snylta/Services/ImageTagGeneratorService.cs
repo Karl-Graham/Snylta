@@ -12,13 +12,14 @@ namespace Snylta.Services
 {
     public class ImageTagGeneratorService
     {
-        
+        private string subscriptionKey;
+
+        public ImageTagGeneratorService(APIKeys aPIKeys)
+        {
+            subscriptionKey = aPIKeys.ComputerVision;
+        }
 
 
-        private const string subscriptionKey = "1674f8976b674ac6bb431eb05e7a7e05";
-
-
-        
         internal async Task<List<string>> GetTagsForImages(List<string> filePaths)
         {
             List<VisualFeatureTypes> features = new List<VisualFeatureTypes>()
@@ -34,7 +35,7 @@ namespace Snylta.Services
                 new System.Net.Http.DelegatingHandler[] { });
 
             computerVision.Endpoint = "https://northeurope.api.cognitive.microsoft.com";
-            List<string> EnglishTags = new List<String>(); 
+            List<string> EnglishTags = new List<String>();
             List<ImageAnalysis> analysises = new List<ImageAnalysis>();
 
             foreach (var item in filePaths)
@@ -64,7 +65,7 @@ namespace Snylta.Services
             {
                 GoodEnoughTags.AddRange(item.Tags.Where(x => x.Confidence > 0.1).Select(x => x.Name));
             }
-           
+
 
             return GoodEnoughTags;
 

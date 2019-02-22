@@ -5,16 +5,26 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using Newtonsoft.Json;
+using Snylta.Models;
+using Microsoft.Extensions.Options;
 
 namespace Snylta.Services
 {
     public class TranslationService
     {
+        private string subscriptionKey;
+
+
+        public TranslationService(APIKeys aPIKeys)
+        {
+            subscriptionKey = aPIKeys.Translate;
+        }
+
         public async Task<List<string>> TranslateText(string[] words)
         {
             string host = "https://api.cognitive.microsofttranslator.com";
             string route = "/translate?api-version=3.0&from=en&to=sv";
-            string subscriptionKey = "19e334b60be94395a5626903ab33256a";
+            //string subscriptionKey = "19e334b60be94395a5626903ab33256a";
 
             var body = words.Select(word => new { Text = word });
 
