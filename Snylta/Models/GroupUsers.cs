@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Snylta.Models
 {
-    public class GroupUsers
+    public class Users
     {
         public string GroupId { get; set; }
         public virtual Group Group { get; set; }
