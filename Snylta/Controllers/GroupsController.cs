@@ -93,7 +93,7 @@ namespace Snylta
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
+            Group @group = await _context.Group.FindAsync(id);
             if (@group == null)
             {
                 return NotFound();

@@ -16,8 +16,8 @@ namespace Snylta.Models
         [Display(Name = "Gruppnamn")]
         public string Name { get; set; }
 
-        public virtual ICollection<GroupThings>  GroupThings { get; set; }
+        public virtual ICollection<GroupThings> GroupThings { get; set; }
 
-        public virtual ICollection<Users> GroupUsers { get; set; }
+        public virtual ICollection<GroupUsers> GroupUsers { get; set; }
     }
 }
