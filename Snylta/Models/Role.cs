@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace Snylta.Models
 {
-    public class Roles : IdentityRole
+    public class Role : IdentityRole
     {
-        public Roles() : base()
+        public virtual ICollection<GroupUsers> GroupUsers { get; set; }
+
+        public Role() : base()
         {
 
         }
 
-        public Roles(string roleName) : base(roleName)
+        public Role(string roleName) : base(roleName)
         {
 
         }

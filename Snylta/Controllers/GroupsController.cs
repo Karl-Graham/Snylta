@@ -14,10 +14,10 @@ namespace Snylta
     public class GroupsController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly RoleManager<Roles> _roleManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly ApplicationDbContext _context;
 
-        public GroupsController(ApplicationDbContext context, RoleManager<Roles> roleManager, UserManager<User> userManager  )
+        public GroupsController(ApplicationDbContext context, RoleManager<Role> roleManager, UserManager<User> userManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -63,21 +63,21 @@ namespace Snylta
         {
             if (ModelState.IsValid)
             {
-                if(!_roleManager.RoleExistsAsync("admin").Result)
+                if (!_roleManager.RoleExistsAsync("admin").Result)
                 {
-                    await _roleManager.CreateAsync(new Roles("admin"));
+                    await _roleManager.CreateAsync(new Role("admin"));
                 }
                 //await _userManager.AddToRoleAsync(await _userManager.GetUserAsync(User), "admin");
                 _context.Add(@group);
 
-                await _context.AddAsync(
-                    new UserRoles()
-                    {
-                        GroupId = @group.Id,
-                        RoleId = await _roleManager.GetRoleIdAsync(await _roleManager.FindByNameAsync("admin")),
-                        UserId = _userManager.GetUserId(User)
-                    }
-                );
+                //await _context.AddAsync(
+                //    new UserRoles()
+                //    {
+                //        GroupId = @group.Id,
+                //        RoleId = await _roleManager.GetRoleIdAsync(await _roleManager.FindByNameAsync("admin")),
+                //        UserId = _userManager.GetUserId(User)
+                //    }
+                //);
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

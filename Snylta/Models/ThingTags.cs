@@ -14,5 +14,7 @@ namespace Snylta.Models
         public string TagId { get; set; }
         public virtual Tag Tag { get; set; }
 
+        public double Confidence { get; set; }
+
     }
 }

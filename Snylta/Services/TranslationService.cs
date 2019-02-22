@@ -15,9 +15,9 @@ namespace Snylta.Services
         private string subscriptionKey;
 
 
-        public TranslationService(APIKeys aPIKeys)
+        public TranslationService(AppSettings aPIKeys)
         {
-            subscriptionKey = aPIKeys.Translate;
+            subscriptionKey = aPIKeys.TranslateKey;
         }
 
         public async Task<List<string>> TranslateText(string[] words)
