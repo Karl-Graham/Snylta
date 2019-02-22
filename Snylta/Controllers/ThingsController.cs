@@ -22,13 +22,15 @@ namespace Snylta
         private readonly ApplicationDbContext _context;
         private readonly UserManager<User> _userManager;
         private readonly TranslationService _translationService;
+        private readonly ImageTagGeneratorService _imageTagGeneratorService;
 
-        public ThingsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService)
+        public ThingsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService, ImageTagGeneratorService imageTagGeneratorService)
         {
             _host = host;
             _context = context;
             _userManager = userManager;
             _translationService = translationService;
+            _imageTagGeneratorService = imageTagGeneratorService;
         }
 
         // GET: Things
@@ -100,6 +102,7 @@ namespace Snylta
                 var thingGuid = Guid.NewGuid().ToString();
 
                 var picList = new List<ThingPic>();
+                var filePaths = new List<string>();
                 foreach (var file in files)
                 {
                     var pic = new ThingPic();
@@ -107,7 +110,7 @@ namespace Snylta
                     var fileName = thingGuid + file.FileName.ToString();
                     var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
-
+                    filePaths.Add(filePath);
 
                     if (file.Length > 0)
                     {
@@ -125,8 +128,40 @@ namespace Snylta
 
                 }
 
+                var EnglishTagList = new List<string>();
+                var SwedishTagList = new List<string>();
+
+                EnglishTagList = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+                SwedishTagList = await _translationService.TranslateText(EnglishTagList.ToArray());
+
+                for (int i = 0; i < EnglishTagList.Count; i++)
+                {
+                    Tag tag;
+
+                    if(!_context.Tag.Any(t => t.EnglishTag == EnglishTagList[i]))
+                    {
+                        tag = new Tag()
+                        {
+                            EnglishTag = EnglishTagList[i],
+                            SwedishTag = SwedishTagList[i]
+                        };
+
+                        _context.Add(tag);
+                    }
+                    else
+                    {
+                        tag = _context.Tag.First(t => t.EnglishTag == EnglishTagList[i]);
+                    }
+
+                    var thingTag = new ThingTags()
+                    {
+                        TagId = tag.Id,
+                        ThingId = thing.Id
+                    };
+                    _context.Add(thingTag);
+                }
                 thing.ThingPics = picList;
-                _context.Thing.Add(thing);
+                //_context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }

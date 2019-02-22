@@ -47,6 +47,10 @@
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
         <p class="card-text">@Model.Description</p>
+        @foreach (var tag in Model.ThingTags)
+        {
+            <span class="badge badge-danger">@tag.Tag.SwedishTag</span>
+        }
     </div>
 </div>
 
