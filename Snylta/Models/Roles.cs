@@ -9,6 +9,14 @@ namespace Snylta.Models
 {
     public class Roles : IdentityRole
     {
-        
+        public Roles() : base()
+        {
+
+        }
+
+        public Roles(string roleName) : base(roleName)
+        {
+
+        }
     }
 }
