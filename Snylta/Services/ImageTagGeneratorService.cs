@@ -13,6 +13,9 @@ namespace Snylta.Services
     public class ImageTagGeneratorService
     {
         private string subscriptionKey;
+        private const int thumbnailWidth = 288*3;
+        private const int thumbnailHeight = 200*3;
+        private const bool writeThumbnailToDisk = false;
 
         public ImageTagGeneratorService(AppSettings aPIKeys)
         {
@@ -40,8 +43,26 @@ namespace Snylta.Services
 
             foreach (var item in filePaths)
             {
+                string itemThumb; 
                 using (Stream imageStream = File.OpenRead(item))
                 {
+                    Stream thumbnail = await computerVision.GenerateThumbnailInStreamAsync(
+                        thumbnailWidth, thumbnailHeight, imageStream, true);
+
+                    string thumbnailFilePath =
+                        item.Insert(item.Length - 4, "_thumb");
+
+                    
+                    using (Stream file = File.Create(thumbnailFilePath))
+                    {
+                        itemThumb = thumbnailFilePath;
+                        thumbnail.CopyTo(file);
+                    }
+                    
+                }
+                using (Stream imageStream = File.OpenRead(itemThumb))
+                {
+
                     ImageAnalysis analysis = await computerVision.AnalyzeImageInStreamAsync(
                         imageStream, features);
 
@@ -51,5 +72,7 @@ namespace Snylta.Services
 
             return analysises;
         }
+
+        
     }
 }
