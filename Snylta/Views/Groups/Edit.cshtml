@@ -63,7 +63,8 @@
             <td>
                 @*<a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
             <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |*@
-            <a asp-action="Delete" asp-route-id="@member">Ta bort</a>
+
+            <a asp-action="RemoveMember" asp-route-groupId="@Model.Id" asp-route-userId="@member.User.Id"> Ta bort</a>
             </td>
         </tr>
         }
@@ -71,7 +72,7 @@
 </table>
 
 <div>
-    <a asp-action="Index">Tillbaka till prylarna</a>
+    <a asp-action="Index">Tillbaka till grupper</a>
 </div>
 
 
