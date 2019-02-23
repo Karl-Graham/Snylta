@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Snylta.Services;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Snylta.Models.ImageTagGenerator;
 
 namespace Snylta
 {
@@ -81,6 +83,13 @@ namespace Snylta
         // POST: Things/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [HttpPost]
+        public IActionResult Test(IFormFile snapPic)
+        {
+            return Ok(snapPic);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
@@ -112,7 +121,7 @@ namespace Snylta
 
                     filePaths.Add(filePath);
 
-                    if (file.Length > 0)
+                    if (file.Length > 0 && file.Length < 10000000)
                     {
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
@@ -128,21 +137,34 @@ namespace Snylta
 
                 }
 
-                var EnglishTagList = new List<string>();
-                var SwedishTagList = new List<string>();
+                //var EnglishTagList = new List<string>();
 
-                EnglishTagList = await _imageTagGeneratorService.GetTagsForImages(filePaths);
-                SwedishTagList = await _translationService.TranslateText(EnglishTagList.ToArray());
+                var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+                
+                //Flatterns the list of analysises with lists of imagetags to list of just imagetags
+                var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
 
-                for (int i = 0; i < EnglishTagList.Count; i++)
+                //Removes duplicates with the same tag name and in the process sums duplicates confidence
+                imageTags = imageTags
+                    .GroupBy(
+                        imageTag => imageTag.Name,
+                        imageTag => imageTag.Confidence,
+                        (key, group) => new ImageTag(key, group.Sum())
+                    ).ToList();
+
+                //EnglishTagList = GetTagsFromAnalysises(analysises);
+                //var listOfconfidence = GetConfidencesFromAnalysises(analysises);
+                var SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
+
+                for (int i = 0; i < imageTags.Count(); i++)
                 {
                     Tag tag;
 
-                    if(!_context.Tag.Any(t => t.EnglishTag == EnglishTagList[i]))
+                    if (!_context.Tag.Any(t => t.EnglishTag == imageTags[i].Name))
                     {
                         tag = new Tag()
                         {
-                            EnglishTag = EnglishTagList[i],
+                            EnglishTag = imageTags[i].Name,
                             SwedishTag = SwedishTagList[i]
                         };
 
@@ -150,13 +172,14 @@ namespace Snylta
                     }
                     else
                     {
-                        tag = _context.Tag.First(t => t.EnglishTag == EnglishTagList[i]);
+                        tag = _context.Tag.First(t => t.EnglishTag == imageTags[i].Name);
                     }
 
                     var thingTag = new ThingTags()
                     {
                         TagId = tag.Id,
-                        ThingId = thing.Id
+                        ThingId = thing.Id,
+                        Confidence = imageTags[i].Confidence
                     };
                     _context.Add(thingTag);
                 }
@@ -168,6 +191,37 @@ namespace Snylta
 
             return View(thing);
         }
+
+        private List<double> GetConfidencesFromAnalysises(List<ImageAnalysis> analysises)
+        {
+            var listOfConfidence = new List<double>();
+
+            foreach (var analysis in analysises)
+                listOfConfidence.AddRange(analysis.Tags.Select(t => t.Confidence));
+
+            return listOfConfidence;
+        }
+
+        private List<string> GetTagsFromAnalysises(List<ImageAnalysis> analysises)
+        {
+            var tags = new List<String>();
+
+            foreach (var analysis in analysises)
+                tags.AddRange(analysis.Tags.Select(t => t.Name));
+
+            return tags;
+        }
+
+        //private List<string> GoodEnoughTags(List<ImageAnalysis> analysises)
+        //{
+        //    var GoodEnoughTags = new List<string>();
+        //    foreach (var item in analysises)
+        //    {
+        //        GoodEnoughTags.AddRange(item.Tags.Where(x => x.Confidence > 0.1).Select(x => x.Name));
+        //    }
+
+        //    return GoodEnoughTags;
+        //}
 
         // GET: Things/Edit/5
         public async Task<IActionResult> Edit(string id)
@@ -323,14 +377,6 @@ namespace Snylta
             return _context.Thing.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> Translate()
-        {
-            var englishArray = new string[] { "tool", "hello" };
-
-            var swedishArray = await _translationService.TranslateText(englishArray);
-
-            return Ok(swedishArray);
-        }
 
         [HttpPost]
         public IActionResult Capture(string name)
@@ -347,7 +393,9 @@ namespace Snylta
                         // Unique filename "Guid"  
                         var myUniqueFileName = Convert.ToString(Guid.NewGuid());
                         // Getting Extension  
-                        var fileExtension = Path.GetExtension(fileName);
+                        //var fileExtension = Path.GetExtension(fileName);
+                        var fileExtension = fileName;
+
                         // Concating filename + fileExtension (unique filename)  
                         var newFileName = string.Concat(myUniqueFileName, fileExtension);
                         //  Generating Path to store photo   

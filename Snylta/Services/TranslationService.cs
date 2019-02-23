@@ -15,12 +15,12 @@ namespace Snylta.Services
         private string subscriptionKey;
 
 
-        public TranslationService(APIKeys aPIKeys)
+        public TranslationService(AppSettings aPIKeys)
         {
-            subscriptionKey = aPIKeys.Translate;
+            subscriptionKey = aPIKeys.TranslateKey;
         }
 
-        public async Task<List<string>> TranslateText(string[] words)
+        public async Task<List<string>> TranslateText(List<string> words)
         {
             string host = "https://api.cognitive.microsofttranslator.com";
             string route = "/translate?api-version=3.0&from=en&to=sv";

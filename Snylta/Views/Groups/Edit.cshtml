@@ -25,9 +25,39 @@
     </div>
 </div>
 
+<h2>Medlemmar</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GroupUsers)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.GroupUsers)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.User.UserName)
+                </td>
+                <td>
+                    @*<a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a>*@
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
 <div>
     <a asp-action="Index">Tillbaka till prylarna</a>
 </div>
+
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

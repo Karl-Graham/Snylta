@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +14,14 @@ namespace Snylta
 {
     public class GroupsController : Controller
     {
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<Role> _roleManager;
         private readonly ApplicationDbContext _context;
 
-        public GroupsController(ApplicationDbContext context)
+        public GroupsController(ApplicationDbContext context, RoleManager<Role> roleManager, UserManager<User> userManager)
         {
+            _userManager = userManager;
+            _roleManager = roleManager;
             _context = context;
         }
 
@@ -55,11 +60,26 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,UserList")] Group @group)
+        public async Task<IActionResult> Create([Bind("Name")] Group @group)
         {
             if (ModelState.IsValid)
             {
+                if (!_roleManager.RoleExistsAsync("admin").Result)
+                {
+                    await _roleManager.CreateAsync(new Role("admin"));
+                }
+                //await _userManager.AddToRoleAsync(await _userManager.GetUserAsync(User), "admin");
                 _context.Add(@group);
+
+                //await _context.AddAsync(
+                //    new UserRoles()
+                //    {
+                //        GroupId = @group.Id,
+                //        RoleId = await _roleManager.GetRoleIdAsync(await _roleManager.FindByNameAsync("admin")),
+                //        UserId = _userManager.GetUserId(User)
+                //    }
+                //);
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -74,7 +94,7 @@ namespace Snylta
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
+            Group @group = await _context.Group.FindAsync(id);
             if (@group == null)
             {
                 return NotFound();

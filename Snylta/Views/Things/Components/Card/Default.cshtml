@@ -1,4 +1,5 @@
 ﻿@model Thing
+@inject AppSettings AppSettings
 
 <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
 
@@ -47,9 +48,9 @@
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
         <p class="card-text">@Model.Description</p>
-        @foreach (var tag in Model.ThingTags)
+        @foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
         {
-            <span class="badge badge-danger">@tag.Tag.SwedishTag</span>
+            <span class="badge badge-danger">@tag.Tag.SwedishTag:@tag.Confidence.ToString("0.##")</span>
         }
     </div>
 </div>
