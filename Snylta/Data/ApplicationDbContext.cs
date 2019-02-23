@@ -30,7 +30,7 @@ namespace Snylta.Data
             //    .HasKey(userRoles => new { userRoles.GroupId, userRoles.RoleId, userRoles.UserId });
 
             modelBuilder.Entity<ThingTags>()
-                .HasKey(thingTags => new { thingTags.ThingId, thingTags.TagId });
+                .HasKey(thingTags => new { thingTags.ThingId, thingTags.TagId});
         }
 
         public DbSet<Group> Group { get; set; }

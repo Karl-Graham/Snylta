@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Snylta.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
+using Snylta.Models.ImageTagGenerator;
 
 namespace Snylta
 {
@@ -136,24 +137,34 @@ namespace Snylta
 
                 }
 
-                var EnglishTagList = new List<string>();
-                var SwedishTagList = new List<string>();
+                //var EnglishTagList = new List<string>();
 
                 var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
-                EnglishTagList = GetTagsFromAnalysises(analysises);
-                var listOfconfidence = GetConfidencesFromAnalysises(analysises);
-                SwedishTagList = await _translationService.TranslateText(EnglishTagList.ToArray());
+                
+                //Flatterns the list of analysises with lists of imagetags to list of just imagetags
+                var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
 
+                //Removes duplicates with the same tag name and in the process sums duplicates confidence
+                imageTags = imageTags
+                    .GroupBy(
+                        imageTag => imageTag.Name,
+                        imageTag => imageTag.Confidence,
+                        (key, group) => new ImageTag(key, group.Sum())
+                    ).ToList();
 
-                for (int i = 0; i < EnglishTagList.Count; i++)
+                //EnglishTagList = GetTagsFromAnalysises(analysises);
+                //var listOfconfidence = GetConfidencesFromAnalysises(analysises);
+                var SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
+
+                for (int i = 0; i < imageTags.Count(); i++)
                 {
                     Tag tag;
 
-                    if(!_context.Tag.Any(t => t.EnglishTag == EnglishTagList[i]))
+                    if (!_context.Tag.Any(t => t.EnglishTag == imageTags[i].Name))
                     {
                         tag = new Tag()
                         {
-                            EnglishTag = EnglishTagList[i],
+                            EnglishTag = imageTags[i].Name,
                             SwedishTag = SwedishTagList[i]
                         };
 
@@ -161,14 +172,14 @@ namespace Snylta
                     }
                     else
                     {
-                        tag = _context.Tag.First(t => t.EnglishTag == EnglishTagList[i]);
+                        tag = _context.Tag.First(t => t.EnglishTag == imageTags[i].Name);
                     }
 
                     var thingTag = new ThingTags()
                     {
                         TagId = tag.Id,
                         ThingId = thing.Id,
-                        Confidence = listOfconfidence[i]
+                        Confidence = imageTags[i].Confidence
                     };
                     _context.Add(thingTag);
                 }
@@ -196,8 +207,8 @@ namespace Snylta
             var tags = new List<String>();
 
             foreach (var analysis in analysises)
-                tags.AddRange(analysis.Tags.Select(t => t.Name)); 
-            
+                tags.AddRange(analysis.Tags.Select(t => t.Name));
+
             return tags;
         }
 
@@ -366,14 +377,6 @@ namespace Snylta
             return _context.Thing.Any(e => e.Id == id);
         }
 
-        public async Task<IActionResult> Translate()
-        {
-            var englishArray = new string[] { "tool", "hello" };
-
-            var swedishArray = await _translationService.TranslateText(englishArray);
-
-            return Ok(swedishArray);
-        }
 
         [HttpPost]
         public IActionResult Capture(string name)
