@@ -46,14 +46,25 @@ namespace Snylta.Areas.Identity.Pages.Account
             public string Email { get; set; }
 
             [Required]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "Lösenordet måste vara minst {2} och max {1} tecken långt.", MinimumLength = 6)]
             [DataType(DataType.Password)]
-            [Display(Name = "Password")]
+            [Display(Name = "Lösenord")]
             public string Password { get; set; }
 
+
+            [Required]
+            [Display(Name = "Förnamn")]
+            [StringLength(100, ErrorMessage = "Förnamnet måste vara minst {2} och max {1} tecken långt.", MinimumLength = 2)]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Efternamn")]
+            [StringLength(100, ErrorMessage = "Efternamnet måste vara minst {2} och max {1} tecken långt.", MinimumLength = 2)]
+            public string LastName { get; set; }
+
             [DataType(DataType.Password)]
-            [Display(Name = "Confirm password")]
-            [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+            [Display(Name = "Bekräfta lösenord")]
+            [Compare("Password", ErrorMessage = "Lösenordet måste matcha.")]
             public string ConfirmPassword { get; set; }
         }
 
@@ -67,7 +78,7 @@ namespace Snylta.Areas.Identity.Pages.Account
             returnUrl = returnUrl ?? Url.Content("~/");
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = Input.Email, Email = Input.Email };
+                var user = new User { UserName = Input.Email, Email = Input.Email, FirstName = Input.FirstName, LastName = Input.LastName };
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {
