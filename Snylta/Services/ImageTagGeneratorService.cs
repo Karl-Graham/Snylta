@@ -43,26 +43,22 @@ namespace Snylta.Services
 
             foreach (var item in filePaths)
             {
-                string itemThumb; 
+                
+                string thumbnailFilePath =
+                        item.Insert(item.Length - 4, "_thumb");
                 using (Stream imageStream = File.OpenRead(item))
                 {
                     Stream thumbnail = await computerVision.GenerateThumbnailInStreamAsync(
                         thumbnailWidth, thumbnailHeight, imageStream, true);
-
-                    string thumbnailFilePath =
-                        item.Insert(item.Length - 4, "_thumb");
-
                     
                     using (Stream file = File.Create(thumbnailFilePath))
                     {
-                        itemThumb = thumbnailFilePath;
                         thumbnail.CopyTo(file);
                     }
                     
                 }
-                using (Stream imageStream = File.OpenRead(itemThumb))
+                using (Stream imageStream = File.OpenRead(thumbnailFilePath))
                 {
-
                     ImageAnalysis analysis = await computerVision.AnalyzeImageInStreamAsync(
                         imageStream, features);
 
