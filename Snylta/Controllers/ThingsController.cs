@@ -15,6 +15,7 @@ using System.IO;
 using Snylta.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Snylta.Models.ImageTagGenerator;
+using Snylta.Models.ViewModels;
 
 namespace Snylta
 {
@@ -77,7 +78,18 @@ namespace Snylta
         public IActionResult Create()
         {
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
-            return View();
+            var viewModel = new CreateThingsComponentViewModel();
+
+            viewModel.GroupSelections = _userManager.GetUserAsync(User).Result.GroupUsers.Select(groupUser =>
+                new GroupSelection()
+                {
+                    Id = groupUser.GroupId,
+                    Name = groupUser.Group.Name,
+                    Selected = true
+                }
+            ).ToArray();
+
+            return View(viewModel);
         }
 
         // POST: Things/Create
@@ -92,7 +104,7 @@ namespace Snylta
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files, string __RequestVerificationToken)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, GroupSelection[] groupSelections, List<IFormFile> files, string __RequestVerificationToken)
         {
             //var file = files.First();
 
@@ -100,9 +112,15 @@ namespace Snylta
             {
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
-
                 _context.Add(thing);
-                ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+                thing.GroupThings = groupSelections.Select(gs => new GroupThings()
+                {
+                    GroupId = gs.Id,
+                    ThingId = thing.Id
+                }
+                ).ToList();
+
+                //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
                 DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
@@ -113,101 +131,103 @@ namespace Snylta
                 //Skapa ThinPic-objekt för varje bild och spara ner i databasen
 
                 // full path to file in temp location
-
-                
-                var thingGuid = Guid.NewGuid().ToString();
-
-                var picList = new List<ThingPic>();
-                var filePaths = new List<string>();
-                //Lägger till bilder som användaren har tagit med kamera
-                
-                foreach (FileInfo img in webcamImgs)
+                if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
-                    var pic = new ThingPic();
-                    //img.Replace
 
-                    img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", img.Name));
-                    //var fileName = thingGuid + img.Name.ToString();
-                    var filePath = _host.WebRootPath + "\\thingimages\\" + img.Name;
+                    var thingGuid = Guid.NewGuid().ToString();
 
-                    filePaths.Add(filePath);
+                    var picList = new List<ThingPic>();
+                    var filePaths = new List<string>();
+                    //Lägger till bilder som användaren har tagit med kamera
 
-                    pic.Pic = img.Name;
-                    picList.Add(pic);
-                    _context.ThingPic.Add(pic);
-                }
-
-                //Lägger till bilder som användaren lägger upp
-                foreach (var file in files)
-                {
-                    var pic = new ThingPic();
-
-                    var fileName = thingGuid + file.FileName.ToString();
-                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
-
-                    filePaths.Add(filePath);
-
-                    if (file.Length > 0 && file.Length < 10000000)
+                    foreach (FileInfo img in webcamImgs)
                     {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await file.CopyToAsync(stream);
+                        var pic = new ThingPic();
+                        //img.Replace
 
-                        }
+                        img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", img.Name));
+                        //var fileName = thingGuid + img.Name.ToString();
+                        var filePath = _host.WebRootPath + "\\thingimages\\" + img.Name;
 
-                        pic.Pic = fileName;
+                        filePaths.Add(filePath);
+
+                        pic.Pic = img.Name;
                         picList.Add(pic);
                         _context.ThingPic.Add(pic);
                     }
-                }
 
-                //var EnglishTagList = new List<string>();
-
-                var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
-                
-                //Flatterns the list of analysises with lists of imagetags to list of just imagetags
-                var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
-
-                //Removes duplicates with the same tag name and in the process sums duplicates confidence
-                imageTags = imageTags
-                    .GroupBy(
-                        imageTag => imageTag.Name,
-                        imageTag => imageTag.Confidence,
-                        (key, group) => new ImageTag(key, group.Sum())
-                    ).ToList();
-
-                //EnglishTagList = GetTagsFromAnalysises(analysises);
-                //var listOfconfidence = GetConfidencesFromAnalysises(analysises);
-                var SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
-
-                for (int i = 0; i < imageTags.Count(); i++)
-                {
-                    Tag tag;
-
-                    if (!_context.Tag.Any(t => t.EnglishTag == imageTags[i].Name))
+                    //Lägger till bilder som användaren lägger upp
+                    foreach (var file in files)
                     {
-                        tag = new Tag()
+                        var pic = new ThingPic();
+
+                        var fileName = thingGuid + file.FileName.ToString();
+                        var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+                        filePaths.Add(filePath);
+
+                        if (file.Length > 0 && file.Length < 10000000)
                         {
-                            EnglishTag = imageTags[i].Name,
-                            SwedishTag = SwedishTagList[i]
+                            using (var stream = new FileStream(filePath, FileMode.Create))
+                            {
+                                await file.CopyToAsync(stream);
+
+                            }
+
+                            pic.Pic = fileName;
+                            picList.Add(pic);
+                            _context.ThingPic.Add(pic);
+                        }
+                    }
+
+                    //var EnglishTagList = new List<string>();
+
+                    var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+
+                    //Flatterns the list of analysises with lists of imagetags to list of just imagetags
+                    var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
+
+                    //Removes duplicates with the same tag name and in the process sums duplicates confidence
+                    imageTags = imageTags
+                        .GroupBy(
+                            imageTag => imageTag.Name,
+                            imageTag => imageTag.Confidence,
+                            (key, group) => new ImageTag(key, group.Sum())
+                        ).ToList();
+
+                    //EnglishTagList = GetTagsFromAnalysises(analysises);
+                    //var listOfconfidence = GetConfidencesFromAnalysises(analysises);
+                    var SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
+
+                    for (int i = 0; i < imageTags.Count(); i++)
+                    {
+                        Tag tag;
+
+                        if (!_context.Tag.Any(t => t.EnglishTag == imageTags[i].Name))
+                        {
+                            tag = new Tag()
+                            {
+                                EnglishTag = imageTags[i].Name,
+                                SwedishTag = SwedishTagList[i]
+                            };
+
+                            _context.Add(tag);
+                        }
+                        else
+                        {
+                            tag = _context.Tag.First(t => t.EnglishTag == imageTags[i].Name);
+                        }
+
+                        var thingTag = new ThingTags()
+                        {
+                            TagId = tag.Id,
+                            ThingId = thing.Id,
+                            Confidence = imageTags[i].Confidence
                         };
-
-                        _context.Add(tag);
+                        _context.Add(thingTag);
                     }
-                    else
-                    {
-                        tag = _context.Tag.First(t => t.EnglishTag == imageTags[i].Name);
-                    }
-
-                    var thingTag = new ThingTags()
-                    {
-                        TagId = tag.Id,
-                        ThingId = thing.Id,
-                        Confidence = imageTags[i].Confidence
-                    };
-                    _context.Add(thingTag);
+                    thing.ThingPics = picList;
                 }
-                thing.ThingPics = picList;
                 //_context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

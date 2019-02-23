@@ -1,4 +1,4 @@
-﻿@model Snylta.Models.Thing
+﻿@model Snylta.Models.ViewModels.CreateThingsComponentViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -13,17 +13,33 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-                
-                @*<input id="webcamImg" type="file" name="webcamImg"  />*@
+                <label asp-for="Thing.Name" class="control-label"></label>
+                <input asp-for="Thing.Name" class="form-control" />
+                <span asp-validation-for="Thing.Name" class="text-danger"></span>
+                <label asp-for="Thing.Description" class="control-label"></label>
+                <input asp-for="Thing.Description" class="form-control" />
+                <span asp-validation-for="Thing.Description" class="text-danger"></span>
 
-                <p>Upload one or more files using this form:</p>
-                <input type="file" name="files" multiple />
+                <div class="custom-control custom-switch">
+                    <ul>
+                        @for (var i = 0; i < Model.GroupSelections.Count(); i++)
+                        {
+                            <li>
+                                <input class="custom-control-input" type="checkbox" asp-for="@Model.GroupSelections[i].Selected" />
+                                <label class="custom-control-label" asp-for="@Model.GroupSelections[i].Selected">@Model.GroupSelections[i].Name</label>
+                                <input type="hidden" asp-for="@Model.GroupSelections[i].Id" />
+                                <input type="hidden" asp-for="@Model.GroupSelections[i].Name" />
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="form-group">
+
+                    <p>Upload one or more files using this form:</p>
+                    <input type="file" name="files" multiple />
+                </div>
+
             </div>
 
             <div class="form-group">
@@ -75,7 +91,7 @@
 
     <script>
 
-         var counter = 0;
+        var counter = 0;
         function myFunction() {
 
             var z = document.getElementsByName('__RequestVerificationToken');
@@ -84,7 +100,7 @@
                 x.style.display = "block";
                 Webcam.set({
                     width: 320,
-                    height: 240,    
+                    height: 240,
                     image_format: 'jpeg',
                     jpeg_quality: 90,
                     upload_name: z[0].value
@@ -122,15 +138,15 @@
                     function (code, text) {
                         //alert('Photo Captured');
 
-                    },counter);
+                    }, counter);
 
             });
-                
 
-                
+
+
 
 
         }
-     
+
     </script>
 }
