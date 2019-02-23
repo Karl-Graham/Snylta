@@ -15,6 +15,10 @@ namespace Snylta.Models
         [Required]
         [Display(Name = "Gruppnamn")]
         public string Name { get; set; }
+        public string Pic { get; set; }
+        public string Description { get; set; }
+
+
 
         public virtual ICollection<GroupThings> GroupThings { get; set; }
 

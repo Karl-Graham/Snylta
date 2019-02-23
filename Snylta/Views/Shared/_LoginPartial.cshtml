@@ -2,10 +2,10 @@
 
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-@{ User user = UserManager.FindByNameAsync(User.Identity.Name).Result;}
 
 @if (SignInManager.IsSignedIn(User))
 {
+User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
 
     <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
         <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hej @user.FirstName!</a>

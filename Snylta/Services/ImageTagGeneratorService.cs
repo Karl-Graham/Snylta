@@ -55,7 +55,6 @@ namespace Snylta.Services
                     {
                         thumbnail.CopyTo(file);
                     }
-                    
                 }
                 using (Stream imageStream = File.OpenRead(thumbnailFilePath))
                 {
@@ -65,10 +64,7 @@ namespace Snylta.Services
                     analysises.Add(analysis);
                 }
             }
-
             return analysises;
         }
-
-        
     }
 }

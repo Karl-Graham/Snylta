@@ -68,3 +68,166 @@
     </tbody>
 </table>
 
+@{int i = 0;}
+
+@if (Model.Where(x => x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))).Count() > 0)
+{
+    <h2>Mina grupper</h2>
+
+    @foreach (var group in Model.Where(x => x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))))
+
+    {
+        var cardId = "card" + i;
+
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
+
+                <div class="card-img-top">
+                    @if (String.IsNullOrEmpty(group.Pic))
+                    {
+                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                    }
+                    else
+                    {
+                        <img class="card-img-top rounded-top" src="~/thingimages/@group.Pic" width="200" />
+                    }
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">@group.Name</h5>
+                    <p class="card-text">@group.Description</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Modal -->
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@group.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    @if (String.IsNullOrEmpty(group.Pic))
+                                    {
+                                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                                    }
+                                    else
+                                    {
+                                        <img class="card-img-top rounded-top" src="~/thingimages/@group.Pic" width="200" />
+
+                                    }
+                                    <div class="card-body">
+                                        <p>@group.Id</p>
+                                    </div>
+                                    @group.Name
+
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="card-body">
+                                        <h4>Medlemmar</h4>
+                                        @foreach (var member in group.GroupUsers)
+                                        {
+                                            <p>@member.User.FirstName @member.User.LastName</p>
+                                        }
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a asp-action="Edit" asp-route-id="@group.Id" class="btn btn-primary">Ändra</a>
+                        <a asp-action="Delete" asp-route-id="@group.Id" class="btn btn-primary">Ta bort</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        i++;
+    }
+}
+
+@if (Model.Where(x => x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))).Count() == 0)
+{
+
+    <h2>Övriga grupper</h2>
+
+    @foreach (var group in Model.Where(x => x.GroupUsers.Any(y => y.UserId != UserManager.GetUserId(User))))
+    {
+        var cardId = "card" + i;
+
+        <!-- Card -->
+        <a data-toggle="modal" data-target="#@cardId">
+            <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
+
+                <div class="card-img-top">
+                    @if (String.IsNullOrEmpty(group.Pic))
+                    {
+                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                    }
+                    else
+                    {
+                        <img class="card-img-top rounded-top" src="~/thingimages/@group.Pic" width="200" />
+                    }
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title">@group.Name</h5>
+                    <p class="card-text">@group.Description</p>
+                </div>
+            </div>
+        </a>
+
+        <!-- Modal -->
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">@group.Name</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="container-fluid">
+
+                            @if (String.IsNullOrEmpty(group.Pic))
+                            {
+                                <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                            }
+                            else
+                            {
+                                <img class="card-img-top rounded-top" src="~/thingimages/@group.Pic" width="200" />
+
+                            }
+                            <div class="card-body">
+                                <p>@group.Name</p>
+                                <p>@group.Description</p>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a asp-action="Join" asp-route-id="@group.Id" class="btn btn-primary">Gå med i grupp</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        i++;
+    }
+
+}
+
+@if (i == 0)
+{
+    <p>Skapa en grupp och bjud in dina vänner så att ni kan börja snylta av varandra.</p>
+}
+
+
