@@ -134,9 +134,7 @@ namespace Snylta
                         pic.Pic = fileName;
                         picList.Add(pic);
                         _context.ThingPic.Add(pic);
-
                     }
-
                 }
 
                 //var EnglishTagList = new List<string>();
