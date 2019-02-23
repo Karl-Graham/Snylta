@@ -12,5 +12,8 @@ namespace Snylta.Models
         public virtual ICollection<Thing> Things { get; set; }
         public virtual ICollection<GroupUsers> GroupUsers { get; set; }
         public virtual ICollection<Snyltning> Snyltningar { get; set; }
+
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
