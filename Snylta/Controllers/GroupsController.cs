@@ -67,22 +67,46 @@ namespace Snylta
                 {
                     await _roleManager.CreateAsync(new Role("admin"));
                 }
-                //await _userManager.AddToRoleAsync(await _userManager.GetUserAsync(User), "admin");
+
                 _context.Add(@group);
 
-                //await _context.AddAsync(
-                //    new UserRoles()
-                //    {
-                //        GroupId = @group.Id,
-                //        RoleId = await _roleManager.GetRoleIdAsync(await _roleManager.FindByNameAsync("admin")),
-                //        UserId = _userManager.GetUserId(User)
-                //    }
-                //);
+                await _context.AddAsync(
+                    new GroupUsers()
+                    {
+                        GroupId = group.Id,
+                        UserId = _userManager.GetUserId(User),
+                        RoleId = _roleManager.FindByNameAsync("admin").Result.Id
+                    }
+                );
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(@group);
+        }
+
+        public async Task<IActionResult> Join(string id)
+        {
+            var group = _context.Group.Find(id);
+
+            if (group == null)
+                return NotFound();
+
+            var userId = _userManager.GetUserId(User);
+
+            if (group.GroupUsers.Any(user => user.UserId == userId))
+                return BadRequest("Du är redan medlem JÖÖ!");
+
+            await _context.AddAsync(
+                new GroupUsers()
+                {
+                    GroupId = group.Id,
+                    UserId = userId
+                }
+            );
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Groups/Edit/5
@@ -135,6 +159,8 @@ namespace Snylta
             }
             return View(@group);
         }
+
+
 
         // GET: Groups/Delete/5
         public async Task<IActionResult> Delete(string id)
