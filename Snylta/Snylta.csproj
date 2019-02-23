@@ -6,7 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20190223092255_add-migration wuut.cs" />
+    <Compile Remove="wwwroot\thingimages\**" />
+    <Content Remove="wwwroot\thingimages\**" />
+    <EmbeddedResource Remove="wwwroot\thingimages\**" />
+    <None Remove="wwwroot\thingimages\**" />
   </ItemGroup>
 
   <ItemGroup>
