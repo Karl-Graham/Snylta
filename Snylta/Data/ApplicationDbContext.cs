@@ -23,7 +23,7 @@ namespace Snylta.Data
             modelBuilder.Entity<GroupThings>()
                 .HasKey(groupThings => new { groupThings.GroupId, groupThings.ThingId });
 
-            modelBuilder.Entity<Users>()
+            modelBuilder.Entity<GroupUsers>()
                 .HasKey(groupUsers => new { groupUsers.GroupId, groupUsers.UserId });
 
             modelBuilder.Entity<UserRoles>()
