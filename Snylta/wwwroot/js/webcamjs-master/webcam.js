@@ -989,10 +989,10 @@ var Webcam = {
 		return taBytes;
 	},
 	
-	upload: function(image_data_uri, target_url, callback) {
+	upload: function(image_data_uri, target_url, callback, imageNumber) {
 		// submit image data to server using binary AJAX
 		var form_elem_name = this.params.upload_name || 'webcam';
-		
+		form_elem_name += imageNumber
 		// detect image format from within image_data_uri
 		var image_fmt = '';
 		if (image_data_uri.match(/^data\:image\/(\w+)/))

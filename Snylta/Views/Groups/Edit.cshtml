@@ -33,22 +33,28 @@
             <th>
                 @Html.DisplayNameFor(model => model.GroupUsers)
             </th>
+            <th>
+                Eventuell roll
+            </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.GroupUsers)
+        @foreach (var member in Model.GroupUsers)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.User.UserName)
-                </td>
-                <td>
-                    @*<a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a>*@
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => member.User.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => member.Role.Name)
+            </td>
+            <td>
+                @*<a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
+            <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
+            <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a>*@
+            </td>
+        </tr>
         }
     </tbody>
 </table>

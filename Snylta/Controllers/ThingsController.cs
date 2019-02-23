@@ -92,7 +92,7 @@ namespace Snylta
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, List<IFormFile> files, string __RequestVerificationToken)
         {
             //var file = files.First();
 
@@ -105,6 +105,8 @@ namespace Snylta
                 ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
+
+               
 
                 // full path to file in temp location
 
@@ -132,9 +134,7 @@ namespace Snylta
                         pic.Pic = fileName;
                         picList.Add(pic);
                         _context.ThingPic.Add(pic);
-
                     }
-
                 }
 
                 //var EnglishTagList = new List<string>();
@@ -399,7 +399,7 @@ namespace Snylta
                         // Concating filename + fileExtension (unique filename)  
                         var newFileName = string.Concat(myUniqueFileName, fileExtension);
                         //  Generating Path to store photo   
-                        var filepath = Path.Combine(_host.WebRootPath, "CameraPhotos") + $@"\{newFileName}";
+                        var filepath = Path.Combine(_host.WebRootPath, "CameraPhotos") + $@"\{fileName}";
 
                         if (!string.IsNullOrEmpty(filepath))
                         {
