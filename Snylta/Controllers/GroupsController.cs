@@ -198,7 +198,7 @@ namespace Snylta
             var activeUserId = _userManager.GetUserId(User);
             var group = await _context.Group.FindAsync(groupId);
 
-            if (groupId == null || userId == null || !group.GroupUsers.Where(x => x.UserId == activeUserId).Any(y => y.Role.Name == Constants.ConstRoles.MotherSnylt))
+            if (groupId == null || userId == null || group.GroupUsers.First(x => x.UserId == userId).Role?.Name != Constants.ConstRoles.MotherSnylt)
             {
                 return NotFound();
             }
