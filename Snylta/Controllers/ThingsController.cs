@@ -138,8 +138,6 @@ namespace Snylta
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
-
-
                     //Lägger till bilder som användaren har tagit med kamera
 
                     foreach (FileInfo img in webcamImgs)
@@ -153,10 +151,12 @@ namespace Snylta
 
                         filePaths.Add(filePath);
 
-                        pic.Pic = img.Name;
-                        picList.Add(pic);
-                        _context.ThingPic.Add(pic);
-                    }
+
+
+                    pic.Pic = img.Name;
+                    picList.Add(pic);
+                    _context.ThingPic.Add(pic);
+                }
 
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)

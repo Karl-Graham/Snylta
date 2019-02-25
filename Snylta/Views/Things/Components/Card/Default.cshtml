@@ -1,7 +1,7 @@
 ﻿@model Thing
 @inject AppSettings AppSettings
 
-<div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
+<div class="card d-inline-block rounded-top rounded-bottom" aria-disabled="true" style="width: 18rem; height: 17rem;">
 
     <div class="card-img-top">
 
@@ -20,10 +20,10 @@
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
         <p class="card-text">@Model.Description</p>
-        @foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
+        @*@foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
         {
-            <span class="badge badge-danger">@tag.Tag.SwedishTag:@tag.Confidence.ToString("0.##")</span>
-        }
+            <span class="badge badge-primary">@tag.Tag.SwedishTag:@tag.Confidence.ToString("0.##")</span> 
+        }*@
     </div>
 </div>
 
