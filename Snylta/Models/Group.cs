@@ -12,16 +12,20 @@ namespace Snylta.Models
     {
         public string Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Du måste ange gruppnamn")]
         [Display(Name = "Gruppnamn")]
         public string Name { get; set; }
+
         public string Pic { get; set; }
+
+        [Display(Name = "Beskrivning")]
         public string Description { get; set; }
 
 
 
         public virtual ICollection<GroupThings> GroupThings { get; set; }
 
+        [Display(Name = "Gruppmedlemmar")]
         public virtual ICollection<GroupUsers> GroupUsers { get; set; }
     }
 }

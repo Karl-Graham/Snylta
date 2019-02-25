@@ -12,61 +12,6 @@
 <p>
     <a asp-action="Create">Skapa ny grupp</a>
 </p>
-<h3>Dina grupper</h3>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Where(x => x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))))
-        {
-
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Ta bort</a> |
-                </td>
-            </tr>
-        }
-
-    </tbody>
-</table>
-
-<h3>Grupper att söka medlemskap i</h3>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Where(x => !x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))))
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    <a asp-action="Join" asp-route-id="@item.Id">Sök medlemskap!</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
 
 @{int i = 0;}
 
@@ -90,7 +35,7 @@
                     }
                     else
                     {
-                        <img class="card-img-top rounded-top" src="~/thingimages/@group.Pic" width="200" />
+                        <img class="card-img-top rounded-top" src="~/groupimages/@group.Pic" width="200" />
                     }
                 </div>
 
@@ -121,13 +66,14 @@
                                     }
                                     else
                                     {
-                                        <img class="card-img-top rounded-top" src="~/thingimages/@group.Pic" width="200" />
+                                        <img class="card-img-top rounded-top" src="~/groupimages/@group.Pic" width="200" />
 
                                     }
                                     <div class="card-body">
-                                        <p>@group.Id</p>
+                                        <p>@group.Name</p>
                                     </div>
-                                    @group.Name
+                                    @group.Description
+                                    
 
                                 </div>
                                 <div class="col-md-6">
@@ -154,12 +100,12 @@
     }
 }
 
-@if (Model.Where(x => x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))).Count() == 0)
+@if (Model.Where(x => !x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))).Count() > 0)
 {
 
     <h2>Övriga grupper</h2>
 
-    @foreach (var group in Model.Where(x => x.GroupUsers.Any(y => y.UserId != UserManager.GetUserId(User))))
+    @foreach (var group in Model.Where(x => !x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))))
     {
         var cardId = "card" + i;
 

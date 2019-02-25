@@ -155,10 +155,12 @@ namespace Snylta
 
                         filePaths.Add(filePath);
 
-                        pic.Pic = img.Name;
-                        picList.Add(pic);
-                        _context.ThingPic.Add(pic);
-                    }
+
+
+                    pic.Pic = img.Name;
+                    picList.Add(pic);
+                    _context.ThingPic.Add(pic);
+                }
 
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
@@ -286,8 +288,22 @@ namespace Snylta
                 return NotFound();
             }
 
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
-            return View(thing);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var viewModel = new CreateThingsComponentViewModel();
+
+            viewModel.GroupSelections = _userManager.GetUserAsync(User).Result.GroupUsers.Select(groupUser =>
+                new GroupSelection()
+                {
+                    Id = groupUser.GroupId,
+                    Name = groupUser.Group.Name,
+                    Selected = true
+                }
+            ).ToArray();
+
+            viewModel.Thing = thing;
+
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+            return View(viewModel);
         }
 
         // POST: Things/Edit/5
