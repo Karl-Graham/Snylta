@@ -43,5 +43,7 @@ namespace Snylta.Data
 
         public DbSet<Tag> Tag { get; set; }
 
+        public DbSet<GroupThings> GroupThing { get; set; }
+
     }
 }
