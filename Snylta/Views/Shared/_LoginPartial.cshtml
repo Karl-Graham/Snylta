@@ -7,10 +7,10 @@
 {
 User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
 
-    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
-        <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hej @user.FirstName!</a>
-        <button type="submit" style="display: inline-block" class="btn btn-link navbar-btn navbar-link">Logga ut</button>
-    </form>
+<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
+    <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hej @user.FirstName!</a>
+    <button type="submit" style="display: inline-block" class="btn">Logga ut</button>  @*btn-link navbar-btn navbar-link*@
+</form>
 }
 else
 {

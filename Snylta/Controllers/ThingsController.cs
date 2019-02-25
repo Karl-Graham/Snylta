@@ -16,6 +16,7 @@ using Snylta.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Snylta.Models.ImageTagGenerator;
 using Snylta.Models.ViewModels;
+using SixLabors.ImageSharp;
 
 namespace Snylta
 {
@@ -41,11 +42,10 @@ namespace Snylta
         {
             User user = await _userManager.GetUserAsync(User);
             var myGroups = user.GroupUsers.Select(g => g.Group);
-            var myThings = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id);
+            var things = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id).Distinct();
             //var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
 
-            
-            return View(myThings);
+            return View(things);
         }
 
         public async Task<IActionResult> MyThings()
@@ -157,15 +157,20 @@ namespace Snylta
 
 
 
-                    pic.Pic = img.Name;
-                    picList.Add(pic);
-                    _context.ThingPic.Add(pic);
-                }
+                        pic.Pic = img.Name;
+                        picList.Add(pic);
+                        _context.ThingPic.Add(pic);
+                    }
 
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
                     {
-                        var thingGuid = Guid.NewGuid().ToString();
+                        bool isImage = IsAnImage(file);
+
+                        if (!isImage)
+                            continue;
+var thingGuid = Guid.NewGuid().ToString();
+
                         var pic = new ThingPic();
 
                         var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
@@ -173,7 +178,7 @@ namespace Snylta
 
                         filePaths.Add(filePath);
 
-                        if (file.Length > 0 && file.Length < 10000000)
+                        if (file.Length > 0)
                         {
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
@@ -237,12 +242,44 @@ namespace Snylta
                 }
                 //_context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyThings));
             }
 
-            return View(thing);
+            return View(nameof(MyThings));
         }
 
+        public bool IsAnImage(object value)
+        {
+            var file = value as IFormFile;
+            if (file == null)
+            {
+                return false;
+            }
+
+            if (file.Length == 0 || file.Length > 1 * 1024 * 1024)
+            {
+                return false;
+            }
+
+            try
+            {
+                // todo: lösa utan att skapa en fil på disk, t.ex med MemoryStream?
+                var tmpFileName = Path.GetTempPath() + Guid.NewGuid();
+
+                using (var stream = new FileStream(tmpFileName, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                var img = Image.Load(tmpFileName);
+
+                return true;
+
+            }
+            catch
+            {
+            }
+            return false;
+        }
         private List<double> GetConfidencesFromAnalysises(List<ImageAnalysis> analysises)
         {
             var listOfConfidence = new List<double>();
@@ -360,7 +397,7 @@ namespace Snylta
                     }
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyThings));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);

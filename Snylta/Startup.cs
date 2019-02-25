@@ -32,7 +32,6 @@ namespace Snylta
         public void ConfigureServices(IServiceCollection services)
         {
              
-
             AppSettings appConfiguration = Configuration.GetSection("AppSettings").Get<AppSettings>();
             services.AddSingleton(appConfiguration);
 

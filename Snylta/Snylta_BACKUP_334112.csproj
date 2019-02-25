@@ -12,6 +12,11 @@
     <None Remove="wwwroot\thingimages\**" />
   </ItemGroup>
 
+<<<<<<< HEAD
+
+
+=======
+>>>>>>> 9cbd1b8105c5f18d64a28a8dc1aa1f301c5fc4cf
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />

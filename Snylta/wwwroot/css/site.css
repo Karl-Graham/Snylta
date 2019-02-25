@@ -14,35 +14,22 @@
     width: 100%;
 }
 
-.card {
-    margin: 30px;
-    /*height: 24rem;*/
-
-}
-
  .card {
+    margin: 30px;
     width: 18rem;
+    /*height: 24rem;*/
     /*border-radius: 6.25rem;*/
     text-align:center;
 }
 
 ul {
-    list-style-type: none;
+    /*list-style-type: none;*/
 }
 
-.navbar {
-    /*background-color: #70FFCD;*/
-
-  
-}
 
 body{
-    margin-top: 3rem;
+    margin-top: 4rem;
 }
-
-/*body, a {
-    color: #FF8B70;
-}*/
 
 h1, h2, h3{
     padding-top:2rem;
