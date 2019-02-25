@@ -40,9 +40,12 @@ namespace Snylta
         public async Task<IActionResult> Index()
         {
             User user = await _userManager.GetUserAsync(User);
-            var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
+            var myGroups = user.GroupUsers.Select(g => g.Group);
+            var myThings = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id);
+            //var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
 
-            return View(await applicationDbContext.ToListAsync());
+            
+            return View(myThings);
         }
 
         public async Task<IActionResult> MyThings()
@@ -134,7 +137,7 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-                    var thingGuid = Guid.NewGuid().ToString();
+                    
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -142,6 +145,7 @@ namespace Snylta
 
                     foreach (FileInfo img in webcamImgs)
                     {
+                        var thingGuid = Guid.NewGuid().ToString();
                         var pic = new ThingPic();
                         //img.Replace
 
@@ -159,9 +163,10 @@ namespace Snylta
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
                     {
+                        var thingGuid = Guid.NewGuid().ToString();
                         var pic = new ThingPic();
 
-                        var fileName = thingGuid + file.FileName.ToString();
+                        var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
                         var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
                         filePaths.Add(filePath);

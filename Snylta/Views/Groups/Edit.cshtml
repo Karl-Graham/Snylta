@@ -64,7 +64,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => member.Role.Name)
                 </td>
-                @if(Constants.ConstRoles.MotherSnylt == userRole)
+                @if(Constants.ConstRoles.MotherSnylt == userRole || user.Id == member.UserId)
                 {
                 <td>
                     <a asp-action="RemoveMember" asp-route-groupId="@Model.Id" asp-route-userId="@member.User.Id"> Ta bort</a>
