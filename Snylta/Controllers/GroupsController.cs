@@ -289,15 +289,18 @@ namespace Snylta
             var activeUserId = _userManager.GetUserId(User);
             var group = await _context.Group.FindAsync(groupId);
 
-            if (groupId == null || userId == null || group.GroupUsers.FirstOrDefault(x => x.UserId == _userManager.GetUserId(User))?.RoleId != _roleManager.FindByNameAsync(Constants.ConstRoles.MotherSnylt).Result.Id)
+            if (groupId == null || userId == null || (activeUserId != userId && group.GroupUsers.FirstOrDefault(gu => gu.UserId == activeUserId)?.Role.Name != Constants.ConstRoles.MotherSnylt))
             {
                 return NotFound();
             }
 
+            
 
             var groupUser = group.GroupUsers.First(x => x.UserId == userId);
             group.GroupUsers.Remove(groupUser);
             await _context.SaveChangesAsync();
+            if (userId == activeUserId)
+                return RedirectToAction(nameof(Index));
             return View(nameof(Edit), group);
 
 
