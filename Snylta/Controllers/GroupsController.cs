@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Microsoft.EntityFrameworkCore;
 using Snylta.Data;
 using Snylta.Models;
@@ -14,12 +18,14 @@ namespace Snylta
 {
     public class GroupsController : Controller
     {
+        private readonly IHostingEnvironment _host;
         private readonly UserManager<User> _userManager;
         private readonly RoleManager<Role> _roleManager;
         private readonly ApplicationDbContext _context;
 
-        public GroupsController(ApplicationDbContext context, RoleManager<Role> roleManager, UserManager<User> userManager)
+        public GroupsController(ApplicationDbContext context, RoleManager<Role> roleManager, IHostingEnvironment host, UserManager<User> userManager)
         {
+            _host = host;
             _userManager = userManager;
             _roleManager = roleManager;
             _context = context;
@@ -55,13 +61,43 @@ namespace Snylta
             return View();
         }
 
-        // POST: Groups/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //// POST: Groups/Create
+        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("Name,Description,")] Group @group)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (!_roleManager.RoleExistsAsync(Constants.ConstRoles.MotherSnylt).Result)
+        //        {
+        //            await _roleManager.CreateAsync(new Role(Constants.ConstRoles.MotherSnylt));
+        //        }
+
+        //        _context.Add(@group);
+
+        //        await _context.AddAsync(
+        //            new GroupUsers()
+        //            {
+        //                GroupId = group.Id,
+        //                UserId = _userManager.GetUserId(User),
+        //                RoleId = _roleManager.FindByNameAsync(Constants.ConstRoles.MotherSnylt).Result.Id
+        //            }
+        //        );
+
+        //        await _context.SaveChangesAsync();
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(@group);
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] Group @group)
+        public async Task<IActionResult> Create([Bind("Name,Description")] Group @group, IFormFile file, string __RequestVerificationToken)
         {
+            //var file = files.First();
+
             if (ModelState.IsValid)
             {
                 if (!_roleManager.RoleExistsAsync(Constants.ConstRoles.MotherSnylt).Result)
@@ -69,7 +105,33 @@ namespace Snylta
                     await _roleManager.CreateAsync(new Role(Constants.ConstRoles.MotherSnylt));
                 }
 
-                _context.Add(@group);
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*");
+
+                if (webcamImgs.Count() == 0 && file != null)
+                {
+                    var groupGuid = Guid.NewGuid().ToString();
+                    var fileName = groupGuid + file.FileName.ToString();
+                    var filePath = _host.WebRootPath + "\\groupimages\\" + fileName;
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+
+                    }
+
+                    group.Pic = fileName;
+                    _context.Add(group);
+
+                }
+                else
+                {
+
+                    webcamImgs[0].MoveTo(Path.Combine(_host.WebRootPath + "\\groupimages\\", webcamImgs[0].Name));
+                    var filePath = _host.WebRootPath + "\\groupimages\\" + webcamImgs[0].Name;
+
+                    group.Pic = webcamImgs[0].Name;
+                    _context.Add(group);
+                }
 
                 await _context.AddAsync(
                     new GroupUsers()
@@ -80,11 +142,34 @@ namespace Snylta
                     }
                 );
 
+                //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+
+                //---Lägga till bild
+             
+                //Getting Text files
+                //1 hitta eventuella webcambilder som användaren tagit
+                //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
+                //3 fyll filePaths-listan med alla filepaths till de flyttade filerna
+                //Skapa ThinPic-objekt för varje bild och spara ner i databasen
+
+                // full path to file in temp location
+                //Lägger till bilder som användaren lägger upp
+
+
+
+
+
+                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@group);
+
+            return View(group);
         }
+
+
+
+
 
         public async Task<IActionResult> Join(string id)
         {
@@ -203,7 +288,7 @@ namespace Snylta
                 return NotFound();
             }
 
-                        
+
             var groupUser = group.GroupUsers.First(x => x.UserId == userId);
             group.GroupUsers.Remove(groupUser);
             await _context.SaveChangesAsync();

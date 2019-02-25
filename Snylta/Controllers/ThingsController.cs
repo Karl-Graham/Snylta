@@ -138,6 +138,8 @@ namespace Snylta
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
+
+
                     //Lägger till bilder som användaren har tagit med kamera
 
                     foreach (FileInfo img in webcamImgs)
@@ -281,8 +283,22 @@ namespace Snylta
                 return NotFound();
             }
 
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
-            return View(thing);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var viewModel = new CreateThingsComponentViewModel();
+
+            viewModel.GroupSelections = _userManager.GetUserAsync(User).Result.GroupUsers.Select(groupUser =>
+                new GroupSelection()
+                {
+                    Id = groupUser.GroupId,
+                    Name = groupUser.Group.Name,
+                    Selected = true
+                }
+            ).ToArray();
+
+            viewModel.Thing = thing;
+
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+            return View(viewModel);
         }
 
         // POST: Things/Edit/5
