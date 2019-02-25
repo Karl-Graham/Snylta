@@ -42,11 +42,10 @@ namespace Snylta
         {
             User user = await _userManager.GetUserAsync(User);
             var myGroups = user.GroupUsers.Select(g => g.Group);
-            var myThings = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id);
+            var things = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id).Distinct();
             //var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
 
-            
-            return View(myThings);
+            return View(things);
         }
 
         public async Task<IActionResult> MyThings()
@@ -243,10 +242,10 @@ var thingGuid = Guid.NewGuid().ToString();
                 }
                 //_context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyThings));
             }
 
-            return View(thing);
+            return View(nameof(MyThings));
         }
 
         public bool IsAnImage(object value)
@@ -398,7 +397,7 @@ var thingGuid = Guid.NewGuid().ToString();
                     }
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyThings));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
