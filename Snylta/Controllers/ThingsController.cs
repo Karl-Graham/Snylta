@@ -45,7 +45,7 @@ namespace Snylta
             var myThings = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id);
             //var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
 
-            
+
             return View(myThings);
         }
 
@@ -117,7 +117,7 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 _context.Add(thing);
-                thing.GroupThings = groupSelections.Where(gs =>  gs.Selected).Select(gs => new GroupThings()
+                thing.GroupThings = groupSelections.Where(gs => gs.Selected).Select(gs => new GroupThings()
                 {
                     GroupId = gs.Id,
                     ThingId = thing.Id
@@ -138,7 +138,7 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-                    
+
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -170,7 +170,8 @@ namespace Snylta
 
                         if (!isImage)
                             continue;
-var thingGuid = Guid.NewGuid().ToString();
+
+                        var thingGuid = Guid.NewGuid().ToString();
 
                         var pic = new ThingPic();
 
