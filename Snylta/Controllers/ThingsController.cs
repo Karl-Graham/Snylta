@@ -149,9 +149,9 @@ namespace Snylta
                         var pic = new ThingPic();
                         //img.Replace
 
-                        img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", img.Name));
+                        img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\",thingGuid + img.Name.Substring(img.Name.Length-5)));
                         //var fileName = thingGuid + img.Name.ToString();
-                        var filePath = _host.WebRootPath + "\\thingimages\\" + img.Name;
+                        var filePath = _host.WebRootPath + "\\thingimages\\" + thingGuid + img.Name.Substring(img.Name.Length - 5);
 
                         filePaths.Add(filePath);
 

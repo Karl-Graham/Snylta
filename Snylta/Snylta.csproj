@@ -10,7 +10,7 @@
     <Content Remove="wwwroot\thingimages\**" />
     <EmbeddedResource Remove="wwwroot\thingimages\**" />
     <None Remove="wwwroot\thingimages\**" />
-  </ItemGroup>
+  </ItemGroup> 
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
