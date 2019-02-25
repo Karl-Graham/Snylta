@@ -169,7 +169,7 @@ namespace Snylta
 
                         if (!isImage)
                             continue;
-var thingGuid = Guid.NewGuid().ToString();
+                        var thingGuid = Guid.NewGuid().ToString();
 
                         var pic = new ThingPic();
 
@@ -422,6 +422,7 @@ var thingGuid = Guid.NewGuid().ToString();
         {
             var thing = await _context.Thing.FindAsync(id);
             thing.ThingPics.RemoveAll(t => t.ThingId == id);
+            _context.GroupThing.RemoveRange(thing.GroupThings);
 
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
