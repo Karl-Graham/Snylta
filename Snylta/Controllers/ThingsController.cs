@@ -350,16 +350,24 @@ var thingGuid = Guid.NewGuid().ToString();
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files)
         {
-            if (id != thing.Id)
+            var thingToUpdate = _context.Thing.FirstOrDefault(t => t.Id == thing.Id);
+
+            if (thingToUpdate == null)
             {
                 return NotFound();
             }
 
+            _context.Update(thingToUpdate);
+
             if (ModelState.IsValid)
             {
+
+                thingToUpdate.Name = thing.Name;
+                thingToUpdate.Description = thing.Description;
+
+
                 var thingGuid = Guid.NewGuid().ToString();
 
-                var picList = new List<ThingPic>();
                 foreach (var file in files)
                 {
                     var pic = new ThingPic();
@@ -375,31 +383,17 @@ var thingGuid = Guid.NewGuid().ToString();
                         }
 
                         pic.Pic = fileName;
-                        picList.Add(pic);
+                        pic.ThingId = thingToUpdate.Id;
+
+                        _context.Add(pic);
                     }
                 }
 
-                try
-                {
-                    thing.ThingPics = picList;
-                    _context.Update(thing);
                     await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ThingExists(thing.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
 
                 return RedirectToAction(nameof(MyThings));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
         }
 
