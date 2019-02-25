@@ -55,28 +55,6 @@ namespace Snylta
             return View(user.Things);
         }
 
-
-        // GET: Things/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var thing = await _context.Thing
-                .Include(t => t.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (thing == null)
-            {
-                return NotFound();
-            }
-
-            return View(thing);
-        }
-
-
-
         // GET: Things/Create
         public IActionResult Create()
         {
@@ -452,12 +430,12 @@ namespace Snylta
 
             if (thing.Owner == user)
                 return BadRequest($"Du kan inte låna din egen pryl!");
-
+            
 
             _context.Add(new Snyltning(user.Id, thing.Id));
             _context.SaveChanges();
 
-            return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
+            return View("Snyltningar", user.Snyltningar.Where(x => x.Active).Select(x => x.Thing).ToList());
         }
 
         public IActionResult AvSnylta(string id)

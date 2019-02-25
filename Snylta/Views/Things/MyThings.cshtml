@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 
+
 @{
     ViewData["Title"] = "Index";
 }
@@ -8,7 +9,7 @@
 
 @if (Model.Where(t => t.Snyltningar.Any(s => s.Active)).Count() > 0)
 {
-    <h2>Mina Snyltade Saker</h2>
+    <h2>Mina snyltade prylar</h2>
 
     @foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
 
@@ -57,7 +58,7 @@
                                             @if (thing.ThingPics.Count() == 0)
                                             {
                                                 <div class="carousel-item active">
-                                                    <img class="d-block w-100" src="~/images/fallback.jpg" width="200" height="200" />
+                                                    <img class="d-block w-100" src="~/images/fallback.jpg" />
                                                 </div>
                                             }
                                         </div>
@@ -74,10 +75,9 @@
                                         }
                                     </div>
                                     <div class="card-body">
-                                        <p>@thing.Id</p>
+                                        <p>@thing.Name</p>
+                                        <p>@thing.Description</p>
                                     </div>
-                                    @thing.Name
-
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
@@ -89,7 +89,6 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-
                         <a asp-action="AvSnylta" asp-route-id="@thing.Id" class="btn btn-primary">AvSnylta</a>
                     </div>
                 </div>
@@ -167,27 +166,26 @@
                                         }
                                     </div>
                                     <div class="card-body">
-                                        <p>@thing.Name</p>
                                         <p>@thing.Description</p>
-
                                     </div>
-
-
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">
-                                        <p>Sprid ordet om Snylta så dina saker inte behöver ligga hemma och skräpa.</p>
+                                        <h4>Finns i grupp</h4>
+                                        @foreach (var item in thing.GroupThings)
+                                        {
+                                            <p>@item.Group.Name</p>
+                                        }
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-
                         <a asp-action="Edit" asp-route-id="@thing.Id" class="btn btn-primary">Ändra</a>
                         <a asp-action="Delete" asp-route-id="@thing.Id" class="btn btn-primary">Ta bort</a>
                     </div>
-	            </div>
+                </div>
             </div>
         </div>
         i++;
