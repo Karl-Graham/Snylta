@@ -123,7 +123,8 @@ namespace Snylta
                 //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
-                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
+
+                DirectoryInfo d = new DirectoryInfo(@"C:\Project\AcceleratedLearning\Slutprojekt\Snylta\wwwroot\CameraPhotos\");//Assuming Test is your Folder
                 FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); //Getting Text files
                 //1 hitta eventuella webcambilder som användaren tagit
                 //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
@@ -136,14 +137,16 @@ namespace Snylta
 
                     var thingGuid = Guid.NewGuid().ToString();
 
-                    var picList = new List<ThingPic>();
-                    var filePaths = new List<string>();
-                    //Lägger till bilder som användaren har tagit med kamera
+                var picList = new List<ThingPic>();
+                var filePaths = new List<string>();
+                //Lägger till bilder som användaren har tagit med kamera
+             
+                
+                foreach (FileInfo img in webcamImgs)
+                {
 
-                    foreach (FileInfo img in webcamImgs)
-                    {
-                        var pic = new ThingPic();
-                        //img.Replace
+                    var pic = new ThingPic();
+                    //img.Replace
 
                         img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", img.Name));
                         //var fileName = thingGuid + img.Name.ToString();
@@ -151,10 +154,12 @@ namespace Snylta
 
                         filePaths.Add(filePath);
 
-                        pic.Pic = img.Name;
-                        picList.Add(pic);
-                        _context.ThingPic.Add(pic);
-                    }
+
+
+                    pic.Pic = img.Name;
+                    picList.Add(pic);
+                    _context.ThingPic.Add(pic);
+                }
 
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
