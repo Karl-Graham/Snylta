@@ -42,11 +42,10 @@ namespace Snylta
         {
             User user = await _userManager.GetUserAsync(User);
             var myGroups = user.GroupUsers.Select(g => g.Group);
-            var myThings = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id);
+            var things = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id).Distinct();
             //var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
 
-
-            return View(myThings);
+            return View(things);
         }
 
         public async Task<IActionResult> MyThings()
@@ -117,7 +116,7 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 _context.Add(thing);
-                thing.GroupThings = groupSelections.Where(gs => gs.Selected).Select(gs => new GroupThings()
+                thing.GroupThings = groupSelections.Where(gs =>  gs.Selected).Select(gs => new GroupThings()
                 {
                     GroupId = gs.Id,
                     ThingId = thing.Id
@@ -138,7 +137,7 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-
+                    
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -170,8 +169,7 @@ namespace Snylta
 
                         if (!isImage)
                             continue;
-
-                        var thingGuid = Guid.NewGuid().ToString();
+var thingGuid = Guid.NewGuid().ToString();
 
                         var pic = new ThingPic();
 
@@ -244,10 +242,10 @@ namespace Snylta
                 }
                 //_context.Thing.Add(thing);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyThings));
             }
 
-            return View(thing);
+            return View(nameof(MyThings));
         }
 
         public bool IsAnImage(object value)
@@ -399,7 +397,7 @@ namespace Snylta
                     }
                 }
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(MyThings));
             }
             ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);

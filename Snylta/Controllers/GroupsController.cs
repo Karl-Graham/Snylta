@@ -108,30 +108,30 @@ namespace Snylta
                 DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
                 FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*");
 
-                if (webcamImgs.Count() == 0 && file != null)
+                //Lägger till bilder som är UPPLADDADE FRÅN DISK
+                if (file != null)
                 {
                     var groupGuid = Guid.NewGuid().ToString();
-                    var fileName = groupGuid + file.FileName.ToString();
+                    var fileName = groupGuid + file.FileName.Substring(file.FileName.ToString().Length - 5);
                     var filePath = _host.WebRootPath + "\\groupimages\\" + fileName;
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
-
                     }
 
                     group.Pic = fileName;
-                    _context.Add(group);
-
                 }
-                else
+
+                //Lägger till bilder från webbcam
+                else if (webcamImgs.Count() > 0)
                 {
 
                     webcamImgs[0].MoveTo(Path.Combine(_host.WebRootPath + "\\groupimages\\", webcamImgs[0].Name));
                     var filePath = _host.WebRootPath + "\\groupimages\\" + webcamImgs[0].Name;
-
                     group.Pic = webcamImgs[0].Name;
-                    _context.Add(group);
                 }
+
+                _context.Add(group);
 
                 await _context.AddAsync(
                     new GroupUsers()
@@ -142,24 +142,7 @@ namespace Snylta
                     }
                 );
 
-                //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
-                //---Lägga till bild
-             
-                //Getting Text files
-                //1 hitta eventuella webcambilder som användaren tagit
-                //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
-                //3 fyll filePaths-listan med alla filepaths till de flyttade filerna
-                //Skapa ThinPic-objekt för varje bild och spara ner i databasen
-
-                // full path to file in temp location
-                //Lägger till bilder som användaren lägger upp
-
-
-
-
-
-                
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
@@ -283,7 +266,7 @@ namespace Snylta
             var activeUserId = _userManager.GetUserId(User);
             var group = await _context.Group.FindAsync(groupId);
 
-            if (groupId == null || userId == null || group.GroupUsers.First(x => x.UserId == userId).Role?.Name != Constants.ConstRoles.MotherSnylt)
+            if (groupId == null || userId == null || group.GroupUsers.FirstOrDefault(x => x.UserId == _userManager.GetUserId(User))?.RoleId != _roleManager.FindByNameAsync(Constants.ConstRoles.MotherSnylt).Result.Id)
             {
                 return NotFound();
             }

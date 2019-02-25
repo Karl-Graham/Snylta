@@ -3,7 +3,7 @@
 @inject UserManager<User> UserManager
 @using Snylta.Data;
 @{User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
-    string userRole = user.GroupUsers.First(u => u.GroupId == Model.Id).Role?.Name;
+    string userRole = user.GroupUsers.FirstOrDefault(u => u.GroupId == Model.Id).Role?.Name;
     ViewData["Title"] = "Edit";
     ;
 }

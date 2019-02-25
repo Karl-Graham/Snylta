@@ -17,20 +17,23 @@
     @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
     {
         var cardId = "card" + i;
+        var cardContainerId = "cardContainerId" + i;
+
 
         <!-- Card -->
-        <div class="cardContainer" id="@cardId">
+        @*<div class="cardContainer" id="@cardContainerId">*@
 
-            <input id="@cardId" name="searchTags" type="hidden"
+            <input id="@cardContainerId" name="searchTags" type="hidden"
                    value="
-           @foreach (var tag in thing.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence))
-            {
-                @Html.Raw(tag.Tag.SwedishTag + " ")
-           }"/>
+                       @foreach (var tag in thing.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence))
+                        {
+                            @Html.Raw(tag.Tag.SwedishTag + " ")
+                       }"
+                   />
             <a data-toggle="modal" data-target="#@cardId">
                 @await Component.InvokeAsync("Card", thing)
             </a>
-        </div>
+        @*</div>*@
 
         <!-- Modal -->
         <div class="modal fade " id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="">
@@ -51,7 +54,7 @@
                                             @{int counter = 0;}
                                             @foreach (var item in thing.ThingPics)
                                             {
-                                                if (i == 0)
+                                                if (counter == 0)
                                                 {
                                                     <div class="carousel-item active">
                                                         <img class="d-block w-100 rounded-top" src="~/thingimages/@item.Pic.Insert(item.Pic.Length - 4, "_thumb")" />
