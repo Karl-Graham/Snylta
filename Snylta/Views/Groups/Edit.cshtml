@@ -1,7 +1,11 @@
 ﻿@model Snylta.Models.Group
-
-@{
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<User> UserManager
+@using Snylta.Data;
+@{User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
+    string userRole = user.GroupUsers.First(u => u.GroupId == Model.Id).Role?.Name;
     ViewData["Title"] = "Edit";
+    ;
 }
 
 <h2>Ändra</h2>
@@ -50,28 +54,30 @@
     <tbody>
         @foreach (var member in Model.GroupUsers)
         {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => member.User.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => member.User.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => member.Role.Name)
-            </td>
-            <td>
-                @*<a asp-action="Edit" asp-route-id="@item.Id">Ändra</a> |
-            <a asp-action="Details" asp-route-id="@item.Id">Detaljer</a> |*@
-            <a asp-action="Delete" asp-route-id="@member">Ta bort</a>
-            </td>
-        </tr>
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => member.User.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => member.User.LastName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => member.Role.Name)
+                </td>
+                @if(Constants.ConstRoles.MotherSnylt == userRole)
+                {
+                <td>
+                    <a asp-action="RemoveMember" asp-route-groupId="@Model.Id" asp-route-userId="@member.User.Id"> Ta bort</a>
+                </td>
+                }
+
+            </tr>
         }
     </tbody>
 </table>
 
 <div>
-    <a asp-action="Index">Tillbaka till prylarna</a>
+    <a asp-action="Index">Tillbaka till grupper</a>
 </div>
 
 
