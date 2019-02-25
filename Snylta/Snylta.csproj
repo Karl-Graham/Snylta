@@ -25,6 +25,7 @@
     <Folder Include="Areas\Identity\Services\" />
     <Folder Include="Models\ImageTagGenerator\" />
     <Folder Include="wwwroot\CameraPhotos\" />
+    <Folder Include="wwwroot\groupimages\" />
     <Folder Include="wwwroot\thingimages\" />
   </ItemGroup>
 
