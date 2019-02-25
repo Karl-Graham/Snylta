@@ -116,7 +116,7 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 _context.Add(thing);
-                thing.GroupThings = groupSelections.Select(gs => new GroupThings()
+                thing.GroupThings = groupSelections.Where(gs =>  gs.Selected).Select(gs => new GroupThings()
                 {
                     GroupId = gs.Id,
                     ThingId = thing.Id

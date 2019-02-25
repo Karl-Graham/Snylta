@@ -1,5 +1,11 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
+@inject AppSettings AppSettings
 
+<label for="site-search"></label>
+<input type="search" id="site-search" name="q"
+       aria-label="Search through site content">
+
+<button></button>
 
 @{int i = 0; }
 
@@ -13,10 +19,18 @@
         var cardId = "card" + i;
 
         <!-- Card -->
-    <a data-toggle="modal" data-target="#@cardId">
-        @await Component.InvokeAsync("Card", thing)
+        <div class="cardContainer" id="@cardId">
 
-    </a>
+            <input id="@cardId" name="searchTags" type="hidden"
+                   value="
+           @foreach (var tag in thing.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence))
+            {
+                @Html.Raw(tag.Tag.SwedishTag + " ")
+           }"/>
+            <a data-toggle="modal" data-target="#@cardId">
+                @await Component.InvokeAsync("Card", thing)
+            </a>
+        </div>
 
         <!-- Modal -->
         <div class="modal fade " id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="">
@@ -119,4 +133,10 @@
 @if (i == 0)
 {
     <p>Dina gruppvänner har tyvärr inte gjort sina saker tillgängliga för snyltning. Det är legitimt att tjata om det är för en god sak, som att rädda planeten.</p>
+}
+
+
+
+@section Scripts {
+    <script src="~/js/filter.js"></script>
 }
