@@ -16,6 +16,7 @@ using Snylta.Services;
 using Microsoft.Azure.CognitiveServices.Vision.ComputerVision.Models;
 using Snylta.Models.ImageTagGenerator;
 using Snylta.Models.ViewModels;
+using SixLabors.ImageSharp;
 
 namespace Snylta
 {
@@ -124,8 +125,8 @@ namespace Snylta
 
                 //---Lägga till bild
 
-                DirectoryInfo d = new DirectoryInfo(@"C:\Project\AcceleratedLearning\Slutprojekt\Snylta\wwwroot\CameraPhotos\");//Assuming Test is your Folder
-                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); //Getting Text files
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\cameraphotos\\");
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*");
                 //1 hitta eventuella webcambilder som användaren tagit
                 //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
                 //3 fyll filePaths-listan med alla filepaths till de flyttade filerna
@@ -137,16 +138,16 @@ namespace Snylta
 
                     var thingGuid = Guid.NewGuid().ToString();
 
-                var picList = new List<ThingPic>();
-                var filePaths = new List<string>();
-                //Lägger till bilder som användaren har tagit med kamera
-             
-                
-                foreach (FileInfo img in webcamImgs)
-                {
+                    var picList = new List<ThingPic>();
+                    var filePaths = new List<string>();
+                    //Lägger till bilder som användaren har tagit med kamera
 
-                    var pic = new ThingPic();
-                    //img.Replace
+
+                    foreach (FileInfo img in webcamImgs)
+                    {
+
+                        var pic = new ThingPic();
+                        //img.Replace
 
                         img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", img.Name));
                         //var fileName = thingGuid + img.Name.ToString();
@@ -156,14 +157,21 @@ namespace Snylta
 
 
 
-                    pic.Pic = img.Name;
-                    picList.Add(pic);
-                    _context.ThingPic.Add(pic);
-                }
+                        pic.Pic = img.Name;
+                        picList.Add(pic);
+                        _context.ThingPic.Add(pic);
+                    }
 
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
                     {
+                        bool isImage = IsAnImage(file);
+
+                        if (!isImage)
+                            continue;
+
+
+
                         var pic = new ThingPic();
 
                         var fileName = thingGuid + file.FileName.ToString();
@@ -171,7 +179,7 @@ namespace Snylta
 
                         filePaths.Add(filePath);
 
-                        if (file.Length > 0 && file.Length < 10000000)
+                        if (file.Length > 0)
                         {
                             using (var stream = new FileStream(filePath, FileMode.Create))
                             {
@@ -241,6 +249,38 @@ namespace Snylta
             return View(thing);
         }
 
+        public bool IsAnImage(object value)
+        {
+            var file = value as IFormFile;
+            if (file == null)
+            {
+                return false;
+            }
+
+            if (file.Length == 0 || file.Length > 1 * 1024 * 1024)
+            {
+                return false;
+            }
+
+            try
+            {
+                // todo: lösa utan att skapa en fil på disk, t.ex med MemoryStream?
+                var tmpFileName = Path.GetTempPath() + Guid.NewGuid();
+
+                using (var stream = new FileStream(tmpFileName, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                var img = Image.Load(tmpFileName);
+
+                return true;
+
+            }
+            catch
+            {
+            }
+            return false;
+        }
         private List<double> GetConfidencesFromAnalysises(List<ImageAnalysis> analysises)
         {
             var listOfConfidence = new List<double>();

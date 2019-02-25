@@ -6,20 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\**" />
     <Compile Remove="wwwroot\thingimages\**" />
-    <Content Remove="Migrations\**" />
     <Content Remove="wwwroot\thingimages\**" />
-    <EmbeddedResource Remove="Migrations\**" />
     <EmbeddedResource Remove="wwwroot\thingimages\**" />
-    <None Remove="Migrations\**" />
     <None Remove="wwwroot\thingimages\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Migrations\20190223163342_WebAfterDrop001.cs" />
-    <Compile Include="Migrations\20190223163342_WebAfterDrop001.Designer.cs" />
-    <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +18,7 @@
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.ComputerVision" Version="3.3.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="2.1.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" PrivateAssets="All" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
   </ItemGroup>
 
   <ItemGroup>
