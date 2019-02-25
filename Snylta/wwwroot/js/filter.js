@@ -2,11 +2,14 @@
 
 let searchTags = document.getElementsByName('searchTags');
 console.log(searchTags);
-let array;
+let showIDs = [];
 for (var searchTag of searchTags) {
     console.log(searchTag)
+    showIDs
     // checkbox.checked = true;
 }
+
+
 // let array = cards.map(c => ({ id: c.id, searchTags: c.value }));
 // console.log(array);
 

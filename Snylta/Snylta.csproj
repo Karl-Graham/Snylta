@@ -16,11 +16,11 @@
     <None Remove="wwwroot\thingimages\**" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <Compile Include="Migrations\20190223163342_WebAfterDrop001.cs" />
     <Compile Include="Migrations\20190223163342_WebAfterDrop001.Designer.cs" />
     <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
-  </ItemGroup>
+  </ItemGroup> -->
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
