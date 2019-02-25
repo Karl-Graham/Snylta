@@ -120,6 +120,11 @@ namespace Snylta
                     }
 
                     group.Pic = fileName;
+
+                    foreach (var img in webcamImgs)
+                    {
+                        img.Delete();
+                    }
                 }
 
                 //Lägger till bilder från webbcam
@@ -129,9 +134,24 @@ namespace Snylta
                     webcamImgs[0].MoveTo(Path.Combine(_host.WebRootPath + "\\groupimages\\", webcamImgs[0].Name));
                     var filePath = _host.WebRootPath + "\\groupimages\\" + webcamImgs[0].Name;
                     group.Pic = webcamImgs[0].Name;
+
+                    foreach (var img in webcamImgs)
+                    {
+                        if (img != webcamImgs[0])
+                        {
+                            img.Delete();
+                        }
+
+                    }
+
                 }
+               
+
 
                 _context.Add(group);
+
+                
+
 
                 await _context.AddAsync(
                     new GroupUsers()
@@ -143,9 +163,12 @@ namespace Snylta
                 );
 
 
+            
                 await _context.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
+
 
             return View(group);
         }
