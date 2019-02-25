@@ -11362,6 +11362,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .btn {
+    background-color: var(--primary);
     font-family: "Montserrat", -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 

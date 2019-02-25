@@ -16,16 +16,6 @@
     <None Remove="wwwroot\thingimages\**" />
   </ItemGroup>
 
-<<<<<<< HEAD
-  
-=======
-  <!-- <ItemGroup>
-    <Compile Include="Migrations\20190223163342_WebAfterDrop001.cs" />
-    <Compile Include="Migrations\20190223163342_WebAfterDrop001.Designer.cs" />
-    <Compile Include="Migrations\ApplicationDbContextModelSnapshot.cs" />
-  </ItemGroup> -->
->>>>>>> 665692f24bca1479772a4a5dd871802440862c2d
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
