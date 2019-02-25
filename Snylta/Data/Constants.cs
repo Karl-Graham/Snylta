@@ -11,7 +11,7 @@ namespace Snylta.Data
         public static class ConstRoles
         {
             public const string MotherSnylt = "MotherSnylt";
-            public const string JuniorSnylt = "JuiniorSnylt";
+            public const string JuniorSnylt = "JuniorSnylt";
             public const string BabySnylt = "BabySnylt";
         }
     }

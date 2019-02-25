@@ -6,9 +6,9 @@
 
 <h2>Ta bort grupp</h2>
 
-<h3>Är du säker på att du vill radera gruppen?</h3>
+<h3>Är du säker på att du vill ta bort gruppen?</h3>
 <div>
-    <h4>Group</h4>
+    <h4>Grupp</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -21,7 +21,10 @@
             @Html.DisplayNameFor(model => model.GroupUsers)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.GroupUsers.ToList())
+            @foreach (var member in Model.GroupUsers)
+            {
+                <p>@member.User.FirstName @member.User.LastName</p>
+            }
         </dd>
     </dl>
     

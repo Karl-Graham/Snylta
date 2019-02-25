@@ -40,9 +40,12 @@ namespace Snylta
         public async Task<IActionResult> Index()
         {
             User user = await _userManager.GetUserAsync(User);
-            var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
+            var myGroups = user.GroupUsers.Select(g => g.Group);
+            var myThings = myGroups.SelectMany(g => g.GroupThings).Select(gt => gt.Thing).Where(t => t.Owner.Id != user.Id);
+            //var applicationDbContext = _context.Thing.Include(x => x.Snyltningar).Where(t => t.Owner.Id != user.Id);
 
-            return View(await applicationDbContext.ToListAsync());
+            
+            return View(myThings);
         }
 
         public async Task<IActionResult> MyThings()
@@ -123,8 +126,7 @@ namespace Snylta
                 //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
-
-                DirectoryInfo d = new DirectoryInfo(@"C:\Project\AcceleratedLearning\Slutprojekt\Snylta\wwwroot\CameraPhotos\");//Assuming Test is your Folder
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
                 FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); //Getting Text files
                 //1 hitta eventuella webcambilder som användaren tagit
                 //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
@@ -135,18 +137,17 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-                    var thingGuid = Guid.NewGuid().ToString();
+                    
 
-                var picList = new List<ThingPic>();
-                var filePaths = new List<string>();
-                //Lägger till bilder som användaren har tagit med kamera
-             
-                
-                foreach (FileInfo img in webcamImgs)
-                {
+                    var picList = new List<ThingPic>();
+                    var filePaths = new List<string>();
+                    //Lägger till bilder som användaren har tagit med kamera
 
-                    var pic = new ThingPic();
-                    //img.Replace
+                    foreach (FileInfo img in webcamImgs)
+                    {
+                        var thingGuid = Guid.NewGuid().ToString();
+                        var pic = new ThingPic();
+                        //img.Replace
 
                         img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", img.Name));
                         //var fileName = thingGuid + img.Name.ToString();
@@ -164,9 +165,10 @@ namespace Snylta
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
                     {
+                        var thingGuid = Guid.NewGuid().ToString();
                         var pic = new ThingPic();
 
-                        var fileName = thingGuid + file.FileName.ToString();
+                        var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
                         var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
 
                         filePaths.Add(filePath);
@@ -286,8 +288,22 @@ namespace Snylta
                 return NotFound();
             }
 
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
-            return View(thing);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            var viewModel = new CreateThingsComponentViewModel();
+
+            viewModel.GroupSelections = _userManager.GetUserAsync(User).Result.GroupUsers.Select(groupUser =>
+                new GroupSelection()
+                {
+                    Id = groupUser.GroupId,
+                    Name = groupUser.Group.Name,
+                    Selected = true
+                }
+            ).ToArray();
+
+            viewModel.Thing = thing;
+
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+            return View(viewModel);
         }
 
         // POST: Things/Edit/5
