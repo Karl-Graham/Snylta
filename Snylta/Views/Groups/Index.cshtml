@@ -7,12 +7,6 @@
     ViewData["Title"] = "Index";
 }
 
-<h2>Grupper</h2>
-
-<p>
-    <a asp-action="Create">Skapa ny grupp</a>
-</p>
-
 @{int i = 0;}
 
 @if (Model.Where(x => x.GroupUsers.Any(y => y.UserId == UserManager.GetUserId(User))).Count() > 0)
