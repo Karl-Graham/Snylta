@@ -16,22 +16,25 @@ using Snylta.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Snylta.Services;
+using System.IO;
 
 namespace Snylta
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment host)
         {
             Configuration = configuration;
+            _host = host;
         }
 
         public IConfiguration Configuration { get; }
+        private IHostingEnvironment _host;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             
+
             AppSettings appConfiguration = Configuration.GetSection("AppSettings").Get<AppSettings>();
             services.AddSingleton(appConfiguration);
 
@@ -74,6 +77,13 @@ namespace Snylta
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+
+            if (!Directory.Exists(_host.WebRootPath + "\\thingimages\\"))
+                Directory.CreateDirectory(_host.WebRootPath + "\\thingimages\\");
+            if (!Directory.Exists(_host.WebRootPath + "\\CameraPhotos\\"))
+                Directory.CreateDirectory(_host.WebRootPath + "\\CameraPhotos\\");
+            if (!Directory.Exists(_host.WebRootPath + "\\groupimages\\"))
+                Directory.CreateDirectory(_host.WebRootPath + "\\groupimages\\");
 
         }
 
