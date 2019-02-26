@@ -28,7 +28,7 @@ namespace Snylta
         private readonly TranslationService _translationService;
         private readonly ImageTagGeneratorService _imageTagGeneratorService;
 
-        public ThingsController(ApplicationDbContext context, UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService, ImageTagGeneratorService imageTagGeneratorService)
+        public ThingsController(ApplicationDbContext context, object context2, object context1, UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService, ImageTagGeneratorService imageTagGeneratorService)
         {
             _host = host;
             _context = context;
@@ -111,6 +111,9 @@ namespace Snylta
 
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
+
+                    
+
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
                     //Lägger till bilder som användaren har tagit med kamera

@@ -239,11 +239,17 @@ namespace Snylta
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
+            var activeUserId = _userManager.GetUserId(User);
             var @group = await _context.Group.FindAsync(id);
+            if (group.GroupUsers.FirstOrDefault(gu => gu.UserId == activeUserId)?.Role.Name != Constants.ConstRoles.MotherSnylt)
+            {
+                return NotFound();
+            }
             _context.Group.Remove(@group);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
 
         // GET: Groups/Delete/5
         public async Task<IActionResult> RemoveMember(string groupId, string userId)
@@ -256,16 +262,12 @@ namespace Snylta
                 return NotFound();
             }
 
-            
-
             var groupUser = group.GroupUsers.First(x => x.UserId == userId);
             group.GroupUsers.Remove(groupUser);
             await _context.SaveChangesAsync();
             if (userId == activeUserId)
                 return RedirectToAction(nameof(Index));
             return View(nameof(Edit), group);
-
-
         }
 
         [HttpPost, ActionName("RemoveMember")]
