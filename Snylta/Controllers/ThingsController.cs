@@ -116,7 +116,7 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 _context.Add(thing);
-                thing.GroupThings = groupSelections.Where(gs =>  gs.Selected).Select(gs => new GroupThings()
+                thing.GroupThings = groupSelections.Where(gs => gs.Selected).Select(gs => new GroupThings()
                 {
                     GroupId = gs.Id,
                     ThingId = thing.Id
@@ -137,7 +137,7 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-                    
+
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -145,19 +145,8 @@ namespace Snylta
 
                     foreach (FileInfo img in webcamImgs)
                     {
-                        var thingGuid = Guid.NewGuid().ToString();
-                        var pic = new ThingPic();
-                        //img.Replace
+                        var pic = AddPicFromWebCam(img, filePaths);
 
-                        img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\",thingGuid + img.Name.Substring(img.Name.Length-5)));
-                        //var fileName = thingGuid + img.Name.ToString();
-                        var filePath = _host.WebRootPath + "\\thingimages\\" + thingGuid + img.Name.Substring(img.Name.Length - 5);
-
-                        filePaths.Add(filePath);
-
-
-
-                        pic.Pic = img.Name;
                         picList.Add(pic);
                         _context.ThingPic.Add(pic);
                     }
@@ -165,50 +154,23 @@ namespace Snylta
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
                     {
-                        bool isImage = IsAnImage(file);
-
-                        if (!isImage)
-                            continue;
-var thingGuid = Guid.NewGuid().ToString();
-
-                        var pic = new ThingPic();
-
-                        var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
-                        var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
-
-                        filePaths.Add(filePath);
-
                         if (file.Length > 0)
                         {
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await file.CopyToAsync(stream);
+                            bool isImage = IsAnImage(file);
 
-                            }
+                            if (!isImage)
+                                continue;
 
-                            pic.Pic = fileName;
+                            var pic = AddPicFromFile(file, filePaths);
+
                             picList.Add(pic);
                             _context.ThingPic.Add(pic);
                         }
                     }
 
                     //var EnglishTagList = new List<string>();
+                    var imageTags = await GenerateTagsAndThumbs(filePaths);
 
-                    var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
-
-                    //Flatterns the list of analysises with lists of imagetags to list of just imagetags
-                    var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
-
-                    //Removes duplicates with the same tag name and in the process sums duplicates confidence
-                    imageTags = imageTags
-                        .GroupBy(
-                            imageTag => imageTag.Name,
-                            imageTag => imageTag.Confidence,
-                            (key, group) => new ImageTag(key, group.Sum())
-                        ).ToList();
-
-                    //EnglishTagList = GetTagsFromAnalysises(analysises);
-                    //var listOfconfidence = GetConfidencesFromAnalysises(analysises);
                     var SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
 
                     for (int i = 0; i < imageTags.Count(); i++)
@@ -246,6 +208,65 @@ var thingGuid = Guid.NewGuid().ToString();
             }
 
             return View(nameof(MyThings));
+        }
+
+        private async Task<List<ImageTag>> GenerateTagsAndThumbs(List<string> filePaths)
+        {
+            var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+
+            //Flatterns the list of analysises with lists of imagetags to list of just imagetags
+            var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
+
+            //Removes duplicates with the same tag name and in the process sums duplicates confidence
+            imageTags = imageTags
+                .GroupBy(
+                    imageTag => imageTag.Name,
+                    imageTag => imageTag.Confidence,
+                    (key, group) => new ImageTag(key, group.Sum())
+                ).ToList();
+
+            return imageTags;
+        }
+
+        private ThingPic AddPicFromFile(IFormFile file, List<string> filePaths)
+        {
+            var thingGuid = Guid.NewGuid().ToString();
+
+            var pic = new ThingPic();
+
+            var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
+            var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+            filePaths.Add(filePath);
+
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyToAsync(stream);
+
+            }
+
+            pic.Pic = fileName;
+
+            return pic;
+        }
+
+        private ThingPic AddPicFromWebCam(FileInfo img, List<string> filePaths)
+        {
+            var thingGuid = Guid.NewGuid().ToString();
+            var pic = new ThingPic();
+            //img.Replace
+
+            img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", thingGuid + img.Name.Substring(img.Name.Length - 5)));
+            //var fileName = thingGuid + img.Name.ToString();
+            var filePath = _host.WebRootPath + "\\thingimages\\" + thingGuid + img.Name.Substring(img.Name.Length - 5);
+
+
+
+            filePaths.Add(filePath);
+
+            pic.Pic = img.Name;
+            return pic;
         }
 
         public bool IsAnImage(object value)
@@ -360,6 +381,7 @@ var thingGuid = Guid.NewGuid().ToString();
                 var thingGuid = Guid.NewGuid().ToString();
 
                 var picList = new List<ThingPic>();
+                //var picList = thing.ThingPics;
                 foreach (var file in files)
                 {
                     var pic = new ThingPic();
@@ -375,6 +397,7 @@ var thingGuid = Guid.NewGuid().ToString();
                         }
 
                         pic.Pic = fileName;
+                        pic.ThingId = thing.Id;
                         picList.Add(pic);
                     }
                 }
