@@ -115,12 +115,7 @@ namespace Snylta
 
                 }
                
-
-
                 _context.Add(group);
-
-                
-
 
                 await _context.AddAsync(
                     new GroupUsers()
@@ -130,8 +125,6 @@ namespace Snylta
                         RoleId = _roleManager.FindByNameAsync(Constants.ConstRoles.MotherSnylt).Result.Id
                     }
                 );
-
-
             
                 await _context.SaveChangesAsync();
                 
