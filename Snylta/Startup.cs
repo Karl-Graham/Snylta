@@ -47,7 +47,7 @@ namespace Snylta
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"));
 
-                options.UseLazyLoadingProxies().UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=aspnet-Snylta-44C862B7-7B08-4715-A87E-03C2220B366B;Trusted_Connection=True;MultipleActiveResultSets=true");
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -65,6 +65,7 @@ namespace Snylta
                     .Build();
                 o.Filters.Add(new AuthorizeFilter(policy));
             });
+            //services.AddMvc();
 
             services.AddTransient<TranslationService>();
             services.AddTransient<ImageTagGeneratorService>();
@@ -86,7 +87,10 @@ namespace Snylta
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+
+                //app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 
