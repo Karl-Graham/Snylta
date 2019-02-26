@@ -55,28 +55,6 @@ namespace Snylta
             return View(user.Things);
         }
 
-
-        // GET: Things/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var thing = await _context.Thing
-                .Include(t => t.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (thing == null)
-            {
-                return NotFound();
-            }
-
-            return View(thing);
-        }
-
-
-
         // GET: Things/Create
         public IActionResult Create()
         {
@@ -126,18 +104,15 @@ namespace Snylta
                 //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
-                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
-                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); //Getting Text files
-                //1 hitta eventuella webcambilder som användaren tagit
-                //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
-                //3 fyll filePaths-listan med alla filepaths till de flyttade filerna
-                //Skapa ThinPic-objekt för varje bild och spara ner i databasen
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); 
+                
 
-                // full path to file in temp location
+                
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-
+                    
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -158,8 +133,9 @@ namespace Snylta
                         {
                             bool isImage = IsAnImage(file);
 
-                            if (!isImage)
-                                continue;
+                        if (!isImage)
+                            continue;
+var thingGuid = Guid.NewGuid().ToString();
 
                             var pic = AddPicFromFile(file, filePaths);
 
@@ -371,17 +347,24 @@ namespace Snylta
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files)
         {
-            if (id != thing.Id)
+            var thingToUpdate = _context.Thing.FirstOrDefault(t => t.Id == thing.Id);
+
+            if (thingToUpdate == null)
             {
                 return NotFound();
             }
 
+            _context.Update(thingToUpdate);
+
             if (ModelState.IsValid)
             {
+
+                thingToUpdate.Name = thing.Name;
+                thingToUpdate.Description = thing.Description;
+
+
                 var thingGuid = Guid.NewGuid().ToString();
 
-                var picList = new List<ThingPic>();
-                //var picList = thing.ThingPics;
                 foreach (var file in files)
                 {
                     var pic = new ThingPic();
@@ -397,32 +380,17 @@ namespace Snylta
                         }
 
                         pic.Pic = fileName;
-                        pic.ThingId = thing.Id;
-                        picList.Add(pic);
+                        pic.ThingId = thingToUpdate.Id;
+
+                        _context.Add(pic);
                     }
                 }
 
-                try
-                {
-                    thing.ThingPics = picList;
-                    _context.Update(thing);
                     await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ThingExists(thing.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
 
                 return RedirectToAction(nameof(MyThings));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
+            //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
             return View(thing);
         }
 
@@ -451,6 +419,7 @@ namespace Snylta
         {
             var thing = await _context.Thing.FindAsync(id);
             thing.ThingPics.RemoveAll(t => t.ThingId == id);
+            _context.GroupThing.RemoveRange(thing.GroupThings);
 
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
@@ -480,12 +449,12 @@ namespace Snylta
 
             if (thing.Owner == user)
                 return BadRequest($"Du kan inte låna din egen pryl!");
-
+            
 
             _context.Add(new Snyltning(user.Id, thing.Id));
             _context.SaveChanges();
 
-            return Ok($"Du {user.UserName} snyltar nu {thing.Name}!");
+            return View("Snyltningar", user.Snyltningar.Where(x => x.Active).Select(x => x.Thing).ToList());
         }
 
         public IActionResult AvSnylta(string id)

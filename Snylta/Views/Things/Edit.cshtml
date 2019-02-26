@@ -55,6 +55,35 @@
 
 <button onclick="myFunction()">Ta en bild</button>
 
+<div id="myDIV" style="display: none">
+
+    <div class="col-md-2"></div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Camera</div>
+            <div class="panel-body">
+                <div id="my_camera"></div>
+                <!-- A button for taking snaps -->
+                <form>
+                    <input type="button" class="btn btn-success" value="Ta bild" onClick="take_snapshot()">
+                    @*<input type="button" class="btn btn-success" value="Spara bild" onClick="save_snapshot()">*@
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">Captured Photo</div>
+            <div class="panel-body">
+                <div id="results">Your captured image will appear here...</div>
+            </div>
+            <br />
+            <br />
+        </div>
+    </div>
+</div>
+
 
 <div>
     <a asp-action="Index">Tillbaka till prylarna</a>
@@ -62,66 +91,66 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
 
-<script>
 
-    var counter = 0;
-    function myFunction() {
+    <script>
 
-        var z = document.getElementsByName('__RequestVerificationToken');
-        var x = document.getElementById("myDIV");
-        if (x.style.display === "none") {
-            x.style.display = "block";
-            Webcam.set({
-                width: 320,
-                height: 240,
-                image_format: 'jpeg',
-                jpeg_quality: 90,
-                upload_name: z[0].value
-            });
-            Webcam.attach('#my_camera');
-        } else {
-            x.style.display = "none";
-            Webcam.reset();
+        var counter = 0;
+        function myFunction() {
+
+            var z = document.getElementsByName('__RequestVerificationToken');
+            var x = document.getElementById("myDIV");
+            if (x.style.display === "none") {
+                x.style.display = "block";
+                Webcam.set({
+                    width: 320,
+                    height: 240,
+                    image_format: 'jpeg',
+                    jpeg_quality: 90,
+                    upload_name: z[0].value
+                });
+                Webcam.attach('#my_camera');
+            } else {
+                x.style.display = "none";
+                Webcam.reset();
+            }
         }
-    }
-</script>
-<script src="~/js/webcamjs-master/webcam.js"></script>
+    </script>
+    <script src="~/js/webcamjs-master/webcam.js"></script>
 
-<!-- Code to handle taking the snapshot and displaying it locally -->
-<script language="JavaScript">
-    function take_snapshot() {
-        counter++;
-        // take snapshot and get image data
-        Webcam.snap(function (data_uri) {
-            //console.log(data_uri)
-            //document.getElementById('webcamImg').innerHTML = data_uri;
-            // display results in page
-            document.getElementById('results').innerHTML =
-                '<img id="snapPic" src="' +
-                data_uri +
-                '"/>';
-            //var formdata = new FormData();
-            //formdata.append("snapPic", document.getElementById('snapPic'));
-            //fetch('/things/test', {
-            //    method: 'POST',
-            //    body: formdata
-            //})
-            Webcam.upload(data_uri,
-                '/Things/Capture',
-                function (code, text) {
-                    //alert('Photo Captured');
+    <!-- Code to handle taking the snapshot and displaying it locally -->
+    <script language="JavaScript">
+        function take_snapshot() {
+            counter++;
+            // take snapshot and get image data
+            Webcam.snap(function (data_uri) {
+                //console.log(data_uri)
+                //document.getElementById('webcamImg').innerHTML = data_uri;
+                // display results in page
+                document.getElementById('results').innerHTML =
+                    '<img id="snapPic" src="' +
+                    data_uri +
+                    '"/>';
+                //var formdata = new FormData();
+                //formdata.append("snapPic", document.getElementById('snapPic'));
+                //fetch('/things/test', {
+                //    method: 'POST',
+                //    body: formdata
+                //})
+                Webcam.upload(data_uri,
+                    '/Things/Capture',
+                    function (code, text) {
+                        //alert('Photo Captured');
 
-                }, counter);
+                    }, counter);
 
-        });
-
+            });
 
 
 
 
-    }
 
-</script>
+        }
 
+    </script>
+}

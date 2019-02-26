@@ -16,22 +16,25 @@ using Snylta.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Snylta.Services;
+using System.IO;
 
 namespace Snylta
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment host)
         {
             Configuration = configuration;
+            _host = host;
         }
 
         public IConfiguration Configuration { get; }
+        private IHostingEnvironment _host;
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-             
+
             AppSettings appConfiguration = Configuration.GetSection("AppSettings").Get<AppSettings>();
             services.AddSingleton(appConfiguration);
 
@@ -47,7 +50,7 @@ namespace Snylta
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection"));
 
-                options.UseLazyLoadingProxies().UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=aspnet-Snylta-44C862B7-7B08-4715-A87E-03C2220B366B;Trusted_Connection=True;MultipleActiveResultSets=true");
+                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
             });
             //services.AddDefaultIdentity<IdentityUser>()
             //    .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -65,6 +68,7 @@ namespace Snylta
                     .Build();
                 o.Filters.Add(new AuthorizeFilter(policy));
             });
+            //services.AddMvc();
 
             services.AddTransient<TranslationService>();
             services.AddTransient<ImageTagGeneratorService>();
@@ -73,6 +77,13 @@ namespace Snylta
                 .AddJsonOptions(
                     options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
                 );
+
+            if (!Directory.Exists(_host.WebRootPath + "\\thingimages\\"))
+                Directory.CreateDirectory(_host.WebRootPath + "\\thingimages\\");
+            if (!Directory.Exists(_host.WebRootPath + "\\CameraPhotos\\"))
+                Directory.CreateDirectory(_host.WebRootPath + "\\CameraPhotos\\");
+            if (!Directory.Exists(_host.WebRootPath + "\\groupimages\\"))
+                Directory.CreateDirectory(_host.WebRootPath + "\\groupimages\\");
 
         }
 
@@ -86,7 +97,10 @@ namespace Snylta
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseDeveloperExceptionPage();
+                app.UseDatabaseErrorPage();
+
+                //app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
 

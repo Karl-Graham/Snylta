@@ -21,42 +21,54 @@
 
         @*<nav class="navbar-expand-lg navbar-light bg-light">*@
         <div class="container">
-        <a class="navbar-brand" asp-controller="Home" asp-action="Index"><strong>Snylta </strong></a>
-        @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index"><strong>Snylta </strong></a>
+            @*<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"><i></i></span>
-        </button>*@
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <ul class="navbar-nav mr-auto">
-                @*<li class="nav-item active">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">Home <span class="sr-only">(current)</span></a>
-                </li>*@
-                @*<li class="nav-item">
-                    <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
-                </li>*@
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Prylar
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            </button>*@
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <ul class="navbar-nav mr-auto">
+                    @*<li class="nav-item active">
+            <a class="nav-link" asp-controller="Home" asp-action="Index">Home <span class="sr-only">(current)</span></a>
+        </li>*@
+                    @*<li class="nav-item">
+            <a class="nav-link" asp-controller="Home" asp-action="About">About</a>
+        </li>*@
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Prylar
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                        <a class="dropdown-item" asp-controller="Things" asp-action="Create">Lägg till pryl</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" asp-controller="Things" asp-action="Index">Andras prylar (snylta!)</a>
-                        <a class="dropdown-item" asp-controller="Things" asp-action="MyThings">Mina prylar</a>
-                        <a class="dropdown-item" asp-controller="Things" asp-action="Snyltningar">Mina pågående snyltningar</a>
-                    </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-controller="Groups" asp-action="Index">Grupper</a>
-                </li>
-            </ul>
-            <div class="nav navbar-nav navbar-right">
-                <partial name="_LoginPartial" />
+                            <a class="dropdown-item" asp-controller="Things" asp-action="Create">Lägg till pryl</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Things" asp-action="Index">Andras prylar (snylta!)</a>
+                            <a class="dropdown-item" asp-controller="Things" asp-action="MyThings">Mina prylar</a>
+                            <a class="dropdown-item" asp-controller="Things" asp-action="Snyltningar">Mina pågående snyltningar</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Grupper
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+
+                            <a class="dropdown-item" asp-controller="Groups" asp-action="Create">Lägg till grupp</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-controller="Groups" asp-action="Index">Mina grupper</a>
+
+                        </div>
+                    </li>
+                    @*<li class="nav-item">
+                        <a class="nav-link" asp-controller="Groups" asp-action="Index">Grupper</a>
+                    </li>*@
+                </ul>
+                <div class="nav navbar-nav navbar-right">
+                    <partial name="_LoginPartial" />
+                </div>
             </div>
-        </div>
 
         </div>
     </nav>

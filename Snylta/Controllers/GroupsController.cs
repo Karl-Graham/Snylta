@@ -61,37 +61,6 @@ namespace Snylta
             return View();
         }
 
-        //// POST: Groups/Create
-        //// To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //// more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("Name,Description,")] Group @group)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (!_roleManager.RoleExistsAsync(Constants.ConstRoles.MotherSnylt).Result)
-        //        {
-        //            await _roleManager.CreateAsync(new Role(Constants.ConstRoles.MotherSnylt));
-        //        }
-
-        //        _context.Add(@group);
-
-        //        await _context.AddAsync(
-        //            new GroupUsers()
-        //            {
-        //                GroupId = group.Id,
-        //                UserId = _userManager.GetUserId(User),
-        //                RoleId = _roleManager.FindByNameAsync(Constants.ConstRoles.MotherSnylt).Result.Id
-        //            }
-        //        );
-
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(@group);
-        //}
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Description")] Group @group, IFormFile file, string __RequestVerificationToken)
@@ -120,6 +89,11 @@ namespace Snylta
                     }
 
                     group.Pic = fileName;
+
+                    foreach (var img in webcamImgs)
+                    {
+                        img.Delete();
+                    }
                 }
 
                 //Lägger till bilder från webbcam
@@ -129,9 +103,24 @@ namespace Snylta
                     webcamImgs[0].MoveTo(Path.Combine(_host.WebRootPath + "\\groupimages\\", webcamImgs[0].Name));
                     var filePath = _host.WebRootPath + "\\groupimages\\" + webcamImgs[0].Name;
                     group.Pic = webcamImgs[0].Name;
+
+                    foreach (var img in webcamImgs)
+                    {
+                        if (img != webcamImgs[0])
+                        {
+                            img.Delete();
+                        }
+
+                    }
+
                 }
+               
+
 
                 _context.Add(group);
+
+                
+
 
                 await _context.AddAsync(
                     new GroupUsers()
@@ -143,9 +132,12 @@ namespace Snylta
                 );
 
 
+            
                 await _context.SaveChangesAsync();
+                
                 return RedirectToAction(nameof(Index));
             }
+
 
             return View(group);
         }
