@@ -124,19 +124,12 @@
             counter++;
             // take snapshot and get image data
             Webcam.snap(function (data_uri) {
-                //console.log(data_uri)
-                //document.getElementById('webcamImg').innerHTML = data_uri;
-                // display results in page
+                
                 document.getElementById('results').innerHTML =
                     '<img id="snapPic" src="' +
                     data_uri +
                     '"/>';
-                //var formdata = new FormData();
-                //formdata.append("snapPic", document.getElementById('snapPic'));
-                //fetch('/things/test', {
-                //    method: 'POST',
-                //    body: formdata
-                //})
+                
                 Webcam.upload(data_uri,
                     '/Things/Capture',
                     function (code, text) {
@@ -145,10 +138,6 @@
                     }, counter);
 
             });
-
-
-
-
 
         }
 

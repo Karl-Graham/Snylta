@@ -104,18 +104,13 @@ namespace Snylta
                 //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
-                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
-                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); //Getting Text files
-                //1 hitta eventuella webcambilder som användaren tagit
-                //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
-                //3 fyll filePaths-listan med alla filepaths till de flyttade filerna
-                //Skapa ThinPic-objekt för varje bild och spara ner i databasen
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); 
+                
 
-                // full path to file in temp location
+                
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
-
-                    
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -125,7 +120,7 @@ namespace Snylta
                     {
                         var thingGuid = Guid.NewGuid().ToString();
                         var pic = new ThingPic();
-                        //img.Replace
+                        
 
                         img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\",thingGuid + img.Name.Substring(img.Name.Length-5)));
                         //var fileName = thingGuid + img.Name.ToString();
