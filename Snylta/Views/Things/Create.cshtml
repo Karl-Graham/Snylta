@@ -21,7 +21,7 @@
                 <span asp-validation-for="Thing.Description" class="text-danger"></span>
                 <div class="form-group">
 
-                    <label>Grupper prylen ska delas i</label>
+                    <label>I vilka grupper vill du dela din pryl?</label>
                     <div class="custom-control custom-switch">
                         <ul>
                             @for (var i = 0; i < Model.GroupSelections.Count(); i++)
@@ -40,54 +40,59 @@
 
                 <div class="form-group">
 
-                    <p>Upload one or more files using this form:</p>
-                    <input type="file" name="files" multiple />
-                </div>
-                <div class="form-group">
-                    <button onclick="myFunction()">Ta en bild</button>
+                    <label class="btn btn-default btn-file">
+                        Ladda upp en fil <input type="file" name="files" multiple style="display: none;">
+                    </label>
+                    eller
+                    <button onclick="myFunction()" type="button" class="btn btn-default">Ta en bild</button>
 
+                    @* <input  type="file" name="files" multiple />*@
                 </div>
+
 
 
             </div>
 
-            <div class="form-group">
-                <input type="submit" value="Skapa" class="btn btn-default" />
-            </div>
+            <button class="btn btn-default" onclick="$('#cover-spin').show(0)">Save</button>
+            @*<div class="form-group">
+                    <input type="submit" value="Skapa" class="btn btn-default">
+                </div>*@
         </form>
     </div>
-</div>
+    <div id="cover-spin"></div>
 
+    @*<button onclick="myFunction()" class="btn btn-default">Ta en bild</button>*@
 
-<div id="myDIV" style="display: none">
+    <div class="col-md-4" id="myDIV" style="display: none">
 
-    <div class="col-md-2"></div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
-            <div class="panel-heading">Camera</div>
-            <div class="panel-body">
-                <div id="my_camera"></div>
-                <!-- A button for taking snaps -->
-                <form>
-                    <input type="button" class="btn btn-success" value="Ta bild" onClick="take_snapshot()">
-                    @*<input type="button" class="btn btn-success" value="Spara bild" onClick="save_snapshot()">*@
-                </form>
+        @*<div class="col-md-2"></div>*@
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">Camera</div>
+                <div class="panel-body">
+                    <div id="my_camera"></div>
+                    <!-- A button for taking snaps -->
+                    <form>
+                        <input type="button" class="btn btn-default" value="Ta bild" onClick="take_snapshot()">
+                        @*<input type="button" class="btn btn-success" value="Spara bild" onClick="save_snapshot()">*@
+                    </form>
 
+                </div>
             </div>
         </div>
+
     </div>
-    <div class="col-md-4">
-        <div class="panel panel-default">
+    <div class="col-md-4" id="capturedPhotoDIV" style="display: none">
+        <div class="panel panel-default" >
             <div class="panel-heading">Captured Photo</div>
             <div class="panel-body">
-                <div id="results">Your captured image will appear here...</div>
+                <div id="results"></div>
             </div>
             <br />
             <br />
         </div>
     </div>
 </div>
-
 
 <div>
     <a asp-action="Index">Tillbaka till prylarna</a>
@@ -104,6 +109,7 @@
 
             var z = document.getElementsByName('__RequestVerificationToken');
             var x = document.getElementById("myDIV");
+
             if (x.style.display === "none") {
                 x.style.display = "block";
                 Webcam.set({
@@ -125,15 +131,18 @@
     <!-- Code to handle taking the snapshot and displaying it locally -->
     <script language="JavaScript">
         function take_snapshot() {
+            var y = document.getElementById("capturedPhotoDIV");
+            if (y.style.display == "none") 
+                y.style.display = "block";
             counter++;
             // take snapshot and get image data
             Webcam.snap(function (data_uri) {
-                
+
                 document.getElementById('results').innerHTML =
                     '<img id="snapPic" src="' +
                     data_uri +
                     '"/>';
-                
+
                 Webcam.upload(data_uri,
                     '/Things/Capture',
                     function (code, text) {

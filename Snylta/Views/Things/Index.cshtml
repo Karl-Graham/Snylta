@@ -5,7 +5,7 @@
 <input type="search" id="site-search" name="q"
        aria-label="Search through site content">
 
-<button></button>
+<button onclick="filter()">Sök</button>
 
 @{int i = 0; }
 
@@ -17,19 +17,13 @@
     @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))
     {
         var cardId = "card" + i;
-        var cardContainerId = "cardContainerId" + i;
+        //var cardContainerId = "cardContainerId" + i;
 
 
         <!-- Card -->
         @*<div class="cardContainer" id="@cardContainerId">*@
 
-            <input id="@cardContainerId" name="searchTags" type="hidden"
-                   value="
-                       @foreach (var tag in thing.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence))
-                        {
-                            @Html.Raw(tag.Tag.SwedishTag + " ")
-                       }"
-                   />
+
             <a data-toggle="modal" data-target="#@cardId">
                 @await Component.InvokeAsync("Card", thing)
             </a>
@@ -71,9 +65,9 @@
                                             }
                                             @if (thing.ThingPics.Count() == 0)
                                             {
-                                                <div class="carousel-item active">
-                                                    <img class="d-block w-100" src="~/images/fallback.jpg" width="200" height="200" />
-                                                </div>
+                                                    <div class="carousel-item active">
+                                                        <img class="d-block w-100" src="~/images/fallback.jpg" /> @*width="200" height="200"*@
+                                                    </div>
                                             }
                                         </div>
                                         @if (thing.ThingPics.Count > 1)
