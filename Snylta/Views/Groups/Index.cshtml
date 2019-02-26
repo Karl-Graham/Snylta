@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<Snylta.Models.Group>
 @using Microsoft.AspNetCore.Identity
-
+@using Snylta.Data;
 @inject UserManager<User> UserManager
 
-@{
+@{User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
+
     ViewData["Title"] = "Index";
 }
 
@@ -83,7 +84,11 @@
                     </div>
                     <div class="modal-footer">
                         <a asp-action="Edit" asp-route-id="@group.Id" class="btn btn-primary">Ändra</a>
-                        <a asp-action="Delete" asp-route-id="@group.Id" class="btn btn-primary">Ta bort</a>
+                        @{string userRole = user.GroupUsers.FirstOrDefault(u => u.GroupId == group.Id).Role?.Name; }
+                        @if (Constants.ConstRoles.MotherSnylt == userRole)
+                        {
+                            <a asp-action="Delete" asp-route-id="@group.Id" class="btn btn-primary">Ta bort</a>
+                        }
                     </div>
                 </div>
             </div>
@@ -108,11 +113,11 @@
                 <div class="card-img-top">
                     @if (String.IsNullOrEmpty(group.Pic))
                     {
-                    <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
                     }
                     else
                     {
-                    <img class="card-img-top rounded-top" src="~/groupimages/@group.Pic" width="200" />
+                        <img class="card-img-top rounded-top" src="~/groupimages/@group.Pic" width="200" />
                     }
                 </div>
 

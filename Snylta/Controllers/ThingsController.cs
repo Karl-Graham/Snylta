@@ -105,14 +105,14 @@ namespace Snylta
 
                 //---Lägga till bild
                 DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");
-                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); 
-                
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*");
 
-                
+
+
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-                    
+
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -133,9 +133,9 @@ namespace Snylta
                         {
                             bool isImage = IsAnImage(file);
 
-                        if (!isImage)
-                            continue;
-var thingGuid = Guid.NewGuid().ToString();
+                            if (!isImage)
+                                continue;
+                            var thingGuid = Guid.NewGuid().ToString();
 
                             var pic = AddPicFromFile(file, filePaths);
 
@@ -386,7 +386,7 @@ var thingGuid = Guid.NewGuid().ToString();
                     }
                 }
 
-                    await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(MyThings));
             }
@@ -449,7 +449,7 @@ var thingGuid = Guid.NewGuid().ToString();
 
             if (thing.Owner == user)
                 return BadRequest($"Du kan inte låna din egen pryl!");
-            
+
 
             _context.Add(new Snyltning(user.Id, thing.Id));
             _context.SaveChanges();
