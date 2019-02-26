@@ -94,7 +94,7 @@ namespace Snylta
 
                 thing.UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 _context.Add(thing);
-                thing.GroupThings = groupSelections.Where(gs =>  gs.Selected).Select(gs => new GroupThings()
+                thing.GroupThings = groupSelections.Where(gs => gs.Selected).Select(gs => new GroupThings()
                 {
                     GroupId = gs.Id,
                     ThingId = thing.Id
@@ -104,14 +104,11 @@ namespace Snylta
                 //ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", thing.UserId);
 
                 //---Lägga till bild
-                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");//Assuming Test is your Folder
-                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); //Getting Text files
-                //1 hitta eventuella webcambilder som användaren tagit
-                //2 flytta dem till mappen där vi lägger tingimages. (foreach?)
-                //3 fyll filePaths-listan med alla filepaths till de flyttade filerna
-                //Skapa ThinPic-objekt för varje bild och spara ner i databasen
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*"); 
+                
 
-                // full path to file in temp location
+                
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
@@ -123,19 +120,8 @@ namespace Snylta
 
                     foreach (FileInfo img in webcamImgs)
                     {
-                        var thingGuid = Guid.NewGuid().ToString();
-                        var pic = new ThingPic();
-                        //img.Replace
+                        var pic = AddPicFromWebCam(img, filePaths);
 
-                        img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\",thingGuid + img.Name.Substring(img.Name.Length-5)));
-                        //var fileName = thingGuid + img.Name.ToString();
-                        var filePath = _host.WebRootPath + "\\thingimages\\" + thingGuid + img.Name.Substring(img.Name.Length - 5);
-
-                        filePaths.Add(filePath);
-
-
-
-                        pic.Pic = img.Name;
                         picList.Add(pic);
                         _context.ThingPic.Add(pic);
                     }
@@ -143,50 +129,24 @@ namespace Snylta
                     //Lägger till bilder som användaren lägger upp
                     foreach (var file in files)
                     {
-                        bool isImage = IsAnImage(file);
+                        if (file.Length > 0)
+                        {
+                            bool isImage = IsAnImage(file);
 
                         if (!isImage)
                             continue;
-                        var thingGuid = Guid.NewGuid().ToString();
+var thingGuid = Guid.NewGuid().ToString();
 
-                        var pic = new ThingPic();
+                            var pic = AddPicFromFile(file, filePaths);
 
-                        var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
-                        var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
-
-                        filePaths.Add(filePath);
-
-                        if (file.Length > 0)
-                        {
-                            using (var stream = new FileStream(filePath, FileMode.Create))
-                            {
-                                await file.CopyToAsync(stream);
-
-                            }
-
-                            pic.Pic = fileName;
                             picList.Add(pic);
                             _context.ThingPic.Add(pic);
                         }
                     }
 
                     //var EnglishTagList = new List<string>();
+                    var imageTags = await GenerateTagsAndThumbs(filePaths);
 
-                    var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
-
-                    //Flatterns the list of analysises with lists of imagetags to list of just imagetags
-                    var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
-
-                    //Removes duplicates with the same tag name and in the process sums duplicates confidence
-                    imageTags = imageTags
-                        .GroupBy(
-                            imageTag => imageTag.Name,
-                            imageTag => imageTag.Confidence,
-                            (key, group) => new ImageTag(key, group.Sum())
-                        ).ToList();
-
-                    //EnglishTagList = GetTagsFromAnalysises(analysises);
-                    //var listOfconfidence = GetConfidencesFromAnalysises(analysises);
                     var SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
 
                     for (int i = 0; i < imageTags.Count(); i++)
@@ -224,6 +184,65 @@ namespace Snylta
             }
 
             return View(nameof(MyThings));
+        }
+
+        private async Task<List<ImageTag>> GenerateTagsAndThumbs(List<string> filePaths)
+        {
+            var analysises = await _imageTagGeneratorService.GetTagsForImages(filePaths);
+
+            //Flatterns the list of analysises with lists of imagetags to list of just imagetags
+            var imageTags = analysises.SelectMany(imagetags => imagetags.Tags).ToList();
+
+            //Removes duplicates with the same tag name and in the process sums duplicates confidence
+            imageTags = imageTags
+                .GroupBy(
+                    imageTag => imageTag.Name,
+                    imageTag => imageTag.Confidence,
+                    (key, group) => new ImageTag(key, group.Sum())
+                ).ToList();
+
+            return imageTags;
+        }
+
+        private ThingPic AddPicFromFile(IFormFile file, List<string> filePaths)
+        {
+            var thingGuid = Guid.NewGuid().ToString();
+
+            var pic = new ThingPic();
+
+            var fileName = thingGuid + file.FileName.Substring(file.FileName.Length - 5);
+            var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+
+            filePaths.Add(filePath);
+
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyToAsync(stream);
+
+            }
+
+            pic.Pic = fileName;
+
+            return pic;
+        }
+
+        private ThingPic AddPicFromWebCam(FileInfo img, List<string> filePaths)
+        {
+            var thingGuid = Guid.NewGuid().ToString();
+            var pic = new ThingPic();
+            //img.Replace
+
+            img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", thingGuid + img.Name.Substring(img.Name.Length - 5)));
+            //var fileName = thingGuid + img.Name.ToString();
+            var filePath = _host.WebRootPath + "\\thingimages\\" + thingGuid + img.Name.Substring(img.Name.Length - 5);
+
+
+
+            filePaths.Add(filePath);
+
+            pic.Pic = img.Name;
+            return pic;
         }
 
         public bool IsAnImage(object value)

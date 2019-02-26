@@ -1,0 +1,74 @@
+﻿a {
+    cursor: pointer;
+}
+
+.Snyltad {
+    opacity: 0.7;
+    display: inline-block;
+    margin: 0px;
+    padding: 0px;
+    /*background-color: red;*/
+}
+
+.modal-dialog-centered .modal-content {
+    width: 100%;
+}
+
+ .card {
+    margin: 30px;
+    width: 18rem;
+    /*height: 24rem;*/
+    /*border-radius: 6.25rem;*/
+    text-align:center;
+}
+
+ul {
+    /*list-style-type: none;*/
+}
+
+
+body{
+    margin-top: 4rem;
+}
+
+h1, h2, h3{
+    padding-top:2rem;
+}
+
+
+/*style="width: 256px; height: 24rem;"*/
+
+/*.cc_image.fallback { /* this URL here is theoretically a local one (always reachable) */
+/*background-image: url('../fallback.png');*/
+/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification\ 
+for details on configuring this project to bundle and minify static web assets. */
+/*body {
+    padding-top: 50px;
+    padding-bottom: 20px;
+}*/
+/* Wrapping element */
+/* Set some basic padding to keep content from hitting the edges */
+/*.body-content {
+    padding-left: 15px;
+    padding-right: 15px;
+}*/
+/* Carousel */
+/*.carousel-caption p {
+    font-size: 20px;
+    line-height: 1.4;
+}*/
+/* Make .svg files in the carousel display properly in older browsers */
+/*.carousel-inner .item img[src$=".svg"] {
+    width: 100%;
+}*/
+/* QR code generator */
+/*#qrCode {
+    margin: 15px;
+}*/
+/* Hide/rearrange for smaller screens */
+/*@media screen and (max-width: 767px) {
+    /* Hide captions */
+/*.carousel-caption {
+        display: none;
+    }
+}*/
