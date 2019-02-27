@@ -1,13 +1,14 @@
 ﻿@model Thing
+@inject AppSettings AppSettings
 
-
-<div class="card d-inline-block rounded-top rounded-bottom" aria-disabled="true" style="width: 18rem; height: 17rem;">
+<div class="card  rounded-top rounded-bottom" style="width: 18rem; height: 17rem; display: inline-block">
+    @* d-inline-block aria-disabled="true"*@
 
     <div class="card-img-top">
 
         @if (Model.ThingPics.Count() == 0)
         {
-                <img class="d-block w-100 rounded-top" src="~/images/fallback.jpg" width="200" height="200" />
+            <img class="d-block w-100 rounded-top" src="~/images/fallback.jpg" width="200" height="200" />
         }
         else
         {
@@ -17,10 +18,15 @@
 
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
-        @*@foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
+        @foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
         {
-            <span class="badge badge-primary">@tag.Tag.SwedishTag:@tag.Confidence.ToString("0.##")</span> 
-        }*@
+            <span class="badge badge-primary">@tag.Tag.SwedishTag:@tag.Confidence.ToString("0.##")</span>
+        }
     </div>
+    <input name="searchTags" type="hidden"
+           value="@foreach (var tag in Model.ThingTags)
+                       {
+                            @Html.Raw(tag.Tag.SwedishTag + " ")
+                       }" />
 </div>
 

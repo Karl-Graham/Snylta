@@ -28,7 +28,7 @@ namespace Snylta
         private readonly TranslationService _translationService;
         private readonly ImageTagGeneratorService _imageTagGeneratorService;
 
-        public ThingsController(ApplicationDbContext context, object context2, object context1, UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService, ImageTagGeneratorService imageTagGeneratorService)
+        public ThingsController(ApplicationDbContext context,  UserManager<User> userManager, IHostingEnvironment host, TranslationService translationService, ImageTagGeneratorService imageTagGeneratorService)
         {
             _host = host;
             _context = context;
@@ -112,7 +112,7 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-
+                    
 
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
@@ -121,7 +121,6 @@ namespace Snylta
                     foreach (FileInfo img in webcamImgs)
                     {
                         var pic = AddPicFromWebCam(img, filePaths);
-
                         picList.Add(pic);
                         _context.ThingPic.Add(pic);
                     }
@@ -215,11 +214,9 @@ namespace Snylta
 
             filePaths.Add(filePath);
 
-
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 file.CopyToAsync(stream);
-
             }
 
             pic.Pic = fileName;
@@ -236,8 +233,6 @@ namespace Snylta
             img.MoveTo(Path.Combine(_host.WebRootPath + "\\thingimages\\", thingGuid + img.Name.Substring(img.Name.Length - 5)));
             //var fileName = thingGuid + img.Name.ToString();
             var filePath = _host.WebRootPath + "\\thingimages\\" + thingGuid + img.Name.Substring(img.Name.Length - 5);
-
-
 
             filePaths.Add(filePath);
 
@@ -345,7 +340,7 @@ namespace Snylta
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,Name,UserId,Description,ThingPic")] Thing thing, List<IFormFile> files, string __RequestVerificationToken, GroupSelection[] groupSelections)
         {
             var thingToUpdate = _context.Thing.FirstOrDefault(t => t.Id == thing.Id);
 
@@ -362,28 +357,91 @@ namespace Snylta
                 thingToUpdate.Name = thing.Name;
                 thingToUpdate.Description = thing.Description;
 
-
-                var thingGuid = Guid.NewGuid().ToString();
-
-                foreach (var file in files)
+                //Tar bort tidigare gruppkopplingar och ersätter de med de nya
+                _context.GroupThing.RemoveRange(thingToUpdate.GroupThings);
+                thingToUpdate.GroupThings = groupSelections.Where(gs => gs.Selected).Select(gs => new GroupThings()
                 {
-                    var pic = new ThingPic();
+                    GroupId = gs.Id,
+                    ThingId = thingToUpdate.Id
+                }
+                ).ToList();
 
-                    var fileName = thingGuid + file.FileName.ToString();
-                    var filePath = _host.WebRootPath + "\\thingimages\\" + fileName;
+                DirectoryInfo d = new DirectoryInfo(_host.WebRootPath + "\\CameraPhotos\\");
+                FileInfo[] webcamImgs = d.GetFiles(__RequestVerificationToken + "*");
 
-                    if (file.Length > 0)
+                if (files.Count > 0 || webcamImgs.Count() > 0)
+                {
+
+                    var picList = new List<ThingPic>();
+                    var filePaths = new List<string>();
+                    //Lägger till bilder som användaren har tagit med kamera
+
+                    foreach (FileInfo img in webcamImgs)
                     {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        var pic = AddPicFromWebCam(img, filePaths);
+
+                        picList.Add(pic);
+                        _context.ThingPic.Add(pic);
+                    }
+
+                    //Lägger till bilder som användaren lägger upp
+                    foreach (var file in files)
+                    {
+                        if (file.Length > 0)
                         {
-                            await file.CopyToAsync(stream);
+                            bool isImage = IsAnImage(file);
+
+                            if (!isImage)
+                                continue;
+                            var thingGuid = Guid.NewGuid().ToString();
+
+                            var pic = AddPicFromFile(file, filePaths);
+
+                            picList.Add(pic);
+                            _context.ThingPic.Add(pic);
+                        }
+                    }
+
+                    //var EnglishTagList = new List<string>();
+                    List<ImageTag> imageTags = await GenerateTagsAndThumbs(filePaths);
+
+                    List<string> SwedishTagList = await _translationService.TranslateText(imageTags.Select(tag => tag.Name).ToList());
+
+                    for (int i = 0; i < imageTags.Count(); i++)
+                    {
+                        Tag tag;
+
+                        if (!_context.Tag.Any(t => t.EnglishTag == imageTags[i].Name))
+                        {
+                            tag = new Tag()
+                            {
+                                EnglishTag = imageTags[i].Name,
+                                SwedishTag = SwedishTagList[i]
+                            };
+
+                            _context.Add(tag);
+                        }
+                        else
+                        {
+                            tag = _context.Tag.First(t => t.EnglishTag == imageTags[i].Name);
                         }
 
-                        pic.Pic = fileName;
-                        pic.ThingId = thingToUpdate.Id;
-
-                        _context.Add(pic);
+                        if (thingToUpdate.ThingTags.Any(tt => tt.Tag.EnglishTag == tag.EnglishTag))
+                        {
+                            thingToUpdate.ThingTags.First(tt => tt.Tag.EnglishTag == tag.EnglishTag).Confidence += imageTags[i].Confidence;
+                        }
+                        else
+                        {
+                            var thingTag = new ThingTags()
+                            {
+                                TagId = tag.Id,
+                                ThingId = thingToUpdate.Id,
+                                Confidence = imageTags[i].Confidence
+                            };
+                        _context.Add(thingTag);
+                        }
                     }
+                    thingToUpdate.ThingPics.AddRange(picList);
                 }
 
                 await _context.SaveChangesAsync();

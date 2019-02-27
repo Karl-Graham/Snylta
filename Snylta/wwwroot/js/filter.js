@@ -1,13 +1,36 @@
 ﻿console.log("Lets get tis party started");
 
-let searchTags = document.getElementsByName('searchTags');
-console.log(searchTags);
-let showIDs = [];
-for (var searchTag of searchTags) {
-    console.log(searchTag)
-    showIDs
-    // checkbox.checked = true;
+let searchField = document.getElementById("site-search");
+let cards = document.getElementsByClassName('card');
+
+function filter() {
+
+    let searchString = searchField.value;
+
+    if (searchString == "")
+        searchString == ".*";
+
+    for (let index = 0; index < cards.length; index++) {
+        // console.log(cards[index]);
+        if (cards[index].getElementsByTagName('input')[0].value.search(new RegExp(searchString, "i")) != -1) {
+            cards[index].style.display = 'inline-block';
+            // console.log("visa");
+        }
+        else {
+
+            cards[index].style.display = 'none';
+            // console.log("dölj");
+        }
+    }
 }
+// cards[0].getElementsByName('searchTags')
+// let searchTags = cards[0].getElementsByTagName('input')[0].value;
+// let array = cards.map(c => ({ id: c.id, searchTags: c.value }));
+// let showIDs = [];
+// for (var cards of cards) {
+//     showIDs.push()
+//     console.log(searchTag)
+// }
 
 
 // let array = cards.map(c => ({ id: c.id, searchTags: c.value }));
