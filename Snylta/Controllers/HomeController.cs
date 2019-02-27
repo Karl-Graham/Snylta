@@ -22,7 +22,8 @@ namespace Snylta.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            //return View();
+            return RedirectToAction("Index", "Things");
         }
 
         public IActionResult About()
