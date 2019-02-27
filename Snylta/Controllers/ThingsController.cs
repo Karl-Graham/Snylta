@@ -136,7 +136,7 @@ namespace Snylta
                                 continue;
                             var thingGuid = Guid.NewGuid().ToString();
 
-                            var pic = AddPicFromFile(file, filePaths);
+                            var pic = await AddPicFromFileAsync(file, filePaths);
 
                             picList.Add(pic);
                             _context.ThingPic.Add(pic);
@@ -203,7 +203,7 @@ namespace Snylta
             return imageTags;
         }
 
-        private ThingPic AddPicFromFile(IFormFile file, List<string> filePaths)
+        private async Task<ThingPic> AddPicFromFileAsync(IFormFile file, List<string> filePaths)
         {
             var thingGuid = Guid.NewGuid().ToString();
 
@@ -216,7 +216,7 @@ namespace Snylta
 
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                file.CopyToAsync(stream);
+                await file.CopyToAsync(stream);
             }
 
             pic.Pic = fileName;
@@ -395,7 +395,7 @@ namespace Snylta
                                 continue;
                             var thingGuid = Guid.NewGuid().ToString();
 
-                            var pic = AddPicFromFile(file, filePaths);
+                            var pic = AddPicFromFileAsync(file, filePaths);
 
                             picList.Add(pic);
                             _context.ThingPic.Add(pic);
