@@ -482,7 +482,7 @@ namespace Snylta
 
             _context.Thing.Remove(thing);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyThings));
         }
 
         public async Task<IActionResult> Snyltningar(string id)
