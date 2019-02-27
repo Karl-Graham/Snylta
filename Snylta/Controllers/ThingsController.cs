@@ -85,7 +85,7 @@ namespace Snylta
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] Thing thing, GroupSelection[] groupSelections, List<IFormFile> files, string __RequestVerificationToken)
+        public async Task<IActionResult> Create([Bind("Name,Description")] Thing thing, GroupSelection[] groupSelections, List<IFormFile> files, string __RequestVerificationToken)
         {
             //var file = files.First();
 
@@ -419,6 +419,7 @@ namespace Snylta
         {
             var thing = await _context.Thing.FindAsync(id);
             thing.ThingPics.RemoveAll(t => t.ThingId == id);
+            _context.Snyltning.RemoveRange(thing.Snyltningar);
             _context.GroupThing.RemoveRange(thing.GroupThings);
 
             _context.Thing.Remove(thing);
