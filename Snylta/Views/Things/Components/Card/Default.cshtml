@@ -18,10 +18,10 @@
 
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
-        @foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
+        @*@foreach (var tag in Model.ThingTags.Where(tt => tt.Confidence > AppSettings.Confidence).OrderByDescending(tt => tt.Confidence))
         {
             <span class="badge badge-primary">@tag.Tag.SwedishTag:@tag.Confidence.ToString("0.##")</span>
-        }
+        }*@
     </div>
     <input name="searchTags" type="hidden"
            value="@foreach (var tag in Model.ThingTags)

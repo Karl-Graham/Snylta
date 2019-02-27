@@ -56,34 +56,34 @@ namespace Test
             //Assert
         }
 
-        [TestMethod]
-        public void TestMethod2()
-        {
-            //Arrange
+        //[TestMethod]
+        //public void TestMethod2()
+        //{
+        //    //Arrange
 
-            //Act
+        //    //Act
 
-            //Assert
-        }
+        //    //Assert
+        //}
 
-        [TestMethod]
-        public void TestMethod2()
-        {
-            //Arrange
+        //[TestMethod]
+        //public void TestMethod2()
+        //{
+        //    //Arrange
 
-            //Act
+        //    //Act
 
-            //Assert
-        }
+        //    //Assert
+        //}
 
-        [TestMethod]
-        public void TestMethod2()
-        {
-            //Arrange
+        //[TestMethod]
+        //public void TestMethod2()
+        //{
+        //    //Arrange
 
-            //Act
+        //    //Act
 
-            //Assert
-        }
+        //    //Assert
+        //}
     }
 }
