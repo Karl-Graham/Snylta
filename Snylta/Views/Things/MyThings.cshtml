@@ -11,6 +11,7 @@
 
 @if (Model.Where(t => t.Snyltningar.Any(s => s.Active)).Count() > 0)
 {
+
     <h2>Mina snyltade prylar</h2>
 
     @foreach (var thing in Model.Where(t => t.Snyltningar.Any(s => s.Active)))
