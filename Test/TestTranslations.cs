@@ -32,10 +32,64 @@ namespace Test
         {
             var expected = new List<string>() { "Hej", "Världen" };
 
-         //    //Act
             var resp = _translationService.TranslateText(inputList.ToList()).Result;
 
-        //    //Assert
+            CollectionAssert.AreEqual(expected, resp);
+        }
+
+        [DataTestMethod]
+        [DataRow(new string[] { "", "" })]
+        public void NoWordsReturnsNoWords(string[] inputList)
+        {
+            var expected = new List<string>() { "", "" };
+
+            var resp = _translationService.TranslateText(inputList.ToList()).Result;
+
+            CollectionAssert.AreEqual(expected, resp);
+        }
+
+        [DataTestMethod]
+        [DataRow(new string[] { "Hello   ", "World  " })]
+        [DataRow(new string[] { "       Hello  ", " World " })]
+        public void WordsWithWhitespeceReturnsWordswithNoWhiteSpace(string[] inputList)
+        {
+            var expected = new List<string>() { "Hej", "Världen" };
+
+            var resp = _translationService.TranslateText(inputList.ToList()).Result;
+
+            CollectionAssert.AreEqual(expected, resp);
+        }
+
+        [DataTestMethod]
+        [DataRow(new string[] { null })]
+        public void NullReturnsNull(string[] inputList)
+        {
+            var expected = new NullReferenceException();
+
+            var resp = _translationService.TranslateText(inputList.ToList()).Result;
+
+            CollectionAssert.AreEqual(null, resp);
+        }
+
+        [DataTestMethod]
+        [DataRow(new string[] { "HelloWorld" })]
+        public void ManyWordsReturnsManyWordsWithoutTranslation(string[] inputList)
+        {
+            var expected = new List<string>() { "HelloWorld" };
+
+            var resp = _translationService.TranslateText(inputList.ToList()).Result;
+
+            CollectionAssert.AreEqual(expected, resp);
+        }
+
+        [DataTestMethod]
+        [DataRow(new string[] { "Asfhdg", "Jjsdla" })]
+        public void NonRealWordsReturnsNonRealWords(string[] inputList)
+        {
+            var expected = new List<string>() { "Asfhdg", "Jjsdla" };
+
+            var resp = _translationService.TranslateText(inputList.ToList()).Result;
+
             CollectionAssert.AreEqual(expected, resp);
         }
 
@@ -44,6 +98,6 @@ namespace Test
         // * null
         // * många ord 
         // * Skicka in "blaha" ord, dvs inte engelska
-        
+
     }
 }
