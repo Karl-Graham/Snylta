@@ -23,6 +23,21 @@ a {
     text-align:center;
 }
 
+.numberCircle {
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    padding: 8px;
+    background: #ff8b70;
+    border: 5px solid #3db289;
+    color: white;
+    text-align: center;
+    font: 36px Arial, sans-serif;
+    display:inline-block;
+    margin-top: 40px;
+    margin-right: 20px;
+}
+
 ul {
     /*list-style-type: none;*/
 }
