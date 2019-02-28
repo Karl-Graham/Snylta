@@ -61,17 +61,6 @@ namespace Test
         }
 
         [DataTestMethod]
-        [DataRow(new string[] { null })]
-        public void NullReturnsNull(string[] inputList)
-        {
-            var expected = new NullReferenceException();
-
-            var resp = _translationService.TranslateText(inputList.ToList()).Result;
-
-            CollectionAssert.AreEqual(null, resp);
-        }
-
-        [DataTestMethod]
         [DataRow(new string[] { "HelloWorld" })]
         public void ManyWordsReturnsManyWordsWithoutTranslation(string[] inputList)
         {
