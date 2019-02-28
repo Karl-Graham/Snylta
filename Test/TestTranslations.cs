@@ -8,93 +8,42 @@ using Snylta.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Test
 {
     [TestClass]
     public class TestTranslations
     {
-        //private readonly ThingsController _thingsController;
+        private readonly TranslationService _translationService;
 
-        //public ThingsController_IsAnImage()
-        //{
-        //    //_thingsController = new ThingsController();
-        //} 
-
-        [TestMethod]
-        public void TestMethod1()
+        public TestTranslations()
         {
-            //var p =  Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-            //var key = System.IO.File.ReadAllText(p);
+            var key = File.ReadAllText(@"C:\Projekt\secrets.txt");
+            _translationService = new TranslationService(new AppSettings() { TranslateKey = key });
 
-            var key = System.IO.File.ReadAllText(@"C:\Projekt\secrets.txt");
-            var service = new TranslationService(new AppSettings() {TranslateKey = key});
+        } 
 
-            var inputList = new List<string>() { "hello", "world" };
+        [DataTestMethod]
+        //    //Arrange
+        [DataRow(new string[] {"hello", "world"})]
+        [DataRow(new string[] {"HeLlO", "wOrLd"})]
+        public void DiffrentCapitalizationReturnsCapitalizedWords(string[] inputList)
+        {
             var expected = new List<string>() { "Hej", "Världen" };
 
-            var resp = service.TranslateText(inputList).Result;
+         //    //Act
+            var resp = _translationService.TranslateText(inputList.ToList()).Result;
+
+        //    //Assert
             CollectionAssert.AreEqual(expected, resp);
         }
 
-        //[TestMethod]
-        //public void TestMethod2()
-        //{
-        //    //Arrange
-
-        //    //Act
-
-        //    //Assert
-        //}
-
-        //[TestMethod]
-        //public void TestMethod3()
-        //{
-        //    //Arrange
-
-        //    //Act
-
-        //    //Assert
-        //}
-
-        //[TestMethod]
-        //public void TestMethod4()
-        //{
-        //    //Arrange
-
-        //    //Act
-
-        //    //Assert
-        //}
-
-        ////[TestMethod]
-        ////public void TestMethod2()
-        ////{
-        ////    //Arrange
-
-        ////    //Act
-
-        ////    //Assert
-        ////}
-
-        ////[TestMethod]
-        ////public void TestMethod2()
-        ////{
-        ////    //Arrange
-
-        ////    //Act
-
-        ////    //Assert
-        ////}
-
-        ////[TestMethod]
-        ////public void TestMethod2()
-        ////{
-        ////    //Arrange
-
-        ////    //Act
-
-        ////    //Assert
-        ////}
+        // * Inga ord
+        // * blanka tecken (space, tabb)
+        // * null
+        // * många ord 
+        // * Skicka in "blaha" ord, dvs inte engelska
+        
     }
 }
