@@ -9,8 +9,8 @@
 <h4>Pryl</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+    <div class="col-md-5">
+        <form asp-action="Create" enctype="multipart/form-data" class="bg-secondary rounded border p-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Thing.Name" class="control-label"></label>
@@ -43,7 +43,7 @@
                     <label class="btn btn-default btn-file">
                         Ladda upp en fil <input type="file" name="files" multiple style="display: none;">
                     </label>
-                    eller
+                    <span>eller</span>
                     <button onclick="myFunction()" type="button" class="btn btn-default">Ta en bild</button>
 
                     @* <input  type="file" name="files" multiple />*@

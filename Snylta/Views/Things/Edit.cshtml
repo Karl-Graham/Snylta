@@ -10,8 +10,8 @@
 <h4>Pryl</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" enctype="multipart/form-data">
+    <div class="col-md-5">
+        <form asp-action="Edit" enctype="multipart/form-data" class="bg-secondary rounded border p-5">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Thing.Id" />
             <input type="hidden" asp-for="Thing.Owner" />

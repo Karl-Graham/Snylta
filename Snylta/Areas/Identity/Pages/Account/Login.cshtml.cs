@@ -41,6 +41,7 @@ namespace Snylta.Areas.Identity.Pages.Account
             [EmailAddress]
             public string Email { get; set; }
 
+            [Display(Name = "Lösenord")]
             [Required]
             [DataType(DataType.Password)]
             public string Password { get; set; }

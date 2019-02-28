@@ -62,7 +62,7 @@ namespace Test
 
         [DataTestMethod]
         [DataRow(new string[] { "HelloWorld" })]
-        public void ManyWordsReturnsManyWordsWithoutTranslation(string[] inputList)
+        public void WordsWithoutSpaceReturnsManyWordsWithoutSpaceAndTranslation(string[] inputList)
         {
             var expected = new List<string>() { "HelloWorld" };
 
@@ -81,12 +81,6 @@ namespace Test
 
             CollectionAssert.AreEqual(expected, resp);
         }
-
-        // * Inga ord
-        // * blanka tecken (space, tabb)
-        // * null
-        // * många ord 
-        // * Skicka in "blaha" ord, dvs inte engelska
 
     }
 }
