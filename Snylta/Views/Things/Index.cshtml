@@ -1,18 +1,29 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 @inject AppSettings AppSettings
 
-<br />  
-<label for="site-search"></label>
-<input type="search" id="site-search" placeholder="Hitta prylen!" name="q"
-       aria-label="Search through site content">
+<br />
+    <div class="row justify-content-between">
+        <div class="col-4">
+            <h2>Prylar att Snylta!</h2>
+        </div>
+        <div class="col-4">
+            <div class="form-inline">
 
-<button class="btn btn-default" onclick="filter()">Sök</button>
+                <input type="search" id="site-search" placeholder="Hitta prylen!" name="q"
+                       aria-label="Search through site content" class="form-control">
+                <button class=" ml-4 btn btn-default" onclick="filter()">Sök</button>
+            </div>
+        </div>
+    </div>
+    @*<label for="site-search"></label>*@
+
+
+
 
 @{int i = 0; }
 
 @if (Model.Where(t => t.Snyltningar.All(s => !s.Active)).Count() > 0)
 {
-    <h2>Prylar att Snylta!</h2>
 
     <!-- Tillgängliga prylar -->
     @foreach (var thing in Model.Where(t => t.Snyltningar.All(s => !s.Active)))

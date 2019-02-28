@@ -4136,6 +4136,7 @@ input[type="button"].btn-block {
 
 .custom-switch {
     padding-left: 2.25rem;
+
 }
 
     .custom-switch .custom-control-label::before {
@@ -4143,14 +4144,20 @@ input[type="button"].btn-block {
         width: 1.75rem;
         pointer-events: all;
         border-radius: 0.5rem;
+        /*background-color: var(--secondary);*/
+        /*background-color: rgba(120, 194, 173, 0.5);*/
+        /*background-color: white;*/
+        border-color: var(--primary);
     }
 
     .custom-switch .custom-control-label::after {
+        background-color: var(--primary);
         top: calc(0.25rem + 2px);
         left: calc(-2.25rem + 2px);
         width: calc(1rem - 4px);
         height: calc(1rem - 4px);
-        background-color: #aaa;
+        border-color: white;
+        /*background-color: white;*/
         border-radius: 0.5rem;
         -webkit-transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-transform 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
         transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-transform 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
@@ -4166,13 +4173,15 @@ input[type="button"].btn-block {
 }
 
 .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-    background-color: #fff;
+    /*background-color: #fff;*/
+    background-color: var(--primary);
     -webkit-transform: translateX(0.75rem);
     transform: translateX(0.75rem);
 }
 
 .custom-switch .custom-control-input:disabled:checked ~ .custom-control-label::before {
-    background-color: rgba(120, 194, 173, 0.5);
+    /*background-color: rgba(120, 194, 173, 0.5);*/
+    background-color: var(--secondary);
 }
 
 .custom-select {
