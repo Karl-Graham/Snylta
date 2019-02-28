@@ -7,15 +7,7 @@ using System.Net;
 
 namespace SnyltaTest2
 {
-    //[TestClass]
-    //public class UnitTest1
-    //{
-    //    [TestMethod]
-    //    public void TestMethod1()
-    //    {
-    //    }
-    //}
-
+    [TestClass]
     public class BasicTests
         : IClassFixture<WebApplicationFactory<Snylta.Startup>>
     {
@@ -26,12 +18,10 @@ namespace SnyltaTest2
             _factory = factory;
         }
 
+        //[TestMethod]
         [Theory]
         [InlineData("/")]
         [InlineData("things/index")]
-        [InlineData("none/all")]
-        //[InlineData("/Privacy")]
-        //[InlineData("/Contact")]
         public async Task Get_EndpointsReturnSuccessAndCorrectContentType(string url)
         {
             // Arrange
@@ -42,8 +32,20 @@ namespace SnyltaTest2
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
-            //Microsoft.VisualStudio.TestTools.UnitTesting.Assert.Equals("text/html; charset=utf-8",
-            //response.Content.Headers.ContentType.ToString());
+        }
+
+        [Theory]
+        [InlineData("none/all")]
+        public async Task Get_BadEndpointsReturnUnSuccsess(string url)
+        {
+            // Arrange
+            var client = _factory.CreateClient();
+
+            // Act
+            var response = await client.GetAsync(url);
+
+            // Assert
+            Microsoft.VisualStudio.TestTools.UnitTesting.Assert.AreEqual(response.StatusCode,HttpStatusCode.NotFound); // Status Code 404
         }
 
     }
