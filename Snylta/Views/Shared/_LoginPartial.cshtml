@@ -5,18 +5,20 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
+    User user = UserManager.FindByNameAsync(User.Identity.Name).Result;
 
-<form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
-    <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hej @user.FirstName!</a>
-    <button type="submit" style="display: inline-block" class="btn">Logga ut</button>  @*btn-link navbar-btn navbar-link*@
-</form>
+    <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" id="logoutForm">
+        <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hej @user.FirstName!</a>
+        <button type="submit" style="display: inline-block" class="btn">Logga ut</button>  @*btn-link navbar-btn navbar-link*@
+    </form>
 }
+
+
 else
 {
-    @*<div class="nav-item">*@
-    @*<a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>*@
-    @*</div>*@
+@*<div class="nav-item">*@
+@*<a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    <a class="nav-item nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>*@
+@*</div>*@
 
 }

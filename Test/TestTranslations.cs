@@ -51,7 +51,7 @@ namespace Test
         [DataTestMethod]
         [DataRow(new string[] { "Hello   ", "World  " })]
         [DataRow(new string[] { "       Hello  ", " World " })]
-        public void WordsWithWhitespeceReturnsWordswithNoWhiteSpace(string[] inputList)
+        public void WordsWithWhitespeceReturnsWordsWithNoWhiteSpace(string[] inputList)
         {
             var expected = new List<string>() { "Hej", "Världen" };
 
