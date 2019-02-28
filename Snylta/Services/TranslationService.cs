@@ -25,10 +25,13 @@ namespace Snylta.Services
             string host = "https://api.cognitive.microsofttranslator.com";
             string route = "/translate?api-version=3.0&from=en&to=sv";
             //string subscriptionKey = "19e334b60be94395a5626903ab33256a";
+            if (words == null)
+            {
+                throw new NullReferenceException();
+            }
+                var body = words.Select(word => new { Text = word.Trim() });
+                var requestBody = JsonConvert.SerializeObject(body);
 
-            var body = words.Select(word => new { Text = word });
-
-            var requestBody = JsonConvert.SerializeObject(body);
 
             using (var client = new HttpClient())
             using (var request = new HttpRequestMessage())
@@ -47,9 +50,16 @@ namespace Snylta.Services
 
                 using (HttpResponseMessage response = await client.SendAsync(request))
                 {
-                    var stringContet = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
-                    var obj = JsonConvert.DeserializeObject<IEnumerable<Translations>>(stringContet);
-                    return obj.Select(x => x.translations.First().text).ToList();
+                    string stringContet = Encoding.UTF8.GetString(await response.Content.ReadAsByteArrayAsync());
+                    IEnumerable<Translations> obj = JsonConvert.DeserializeObject<IEnumerable<Translations>>(stringContet);
+                    var listOfSwedishStrings = obj.Select(x => x.translations.First().text).ToList();
+
+                    for (int i = 0; i < listOfSwedishStrings.Count; i++)
+                    {
+                        listOfSwedishStrings[i] = listOfSwedishStrings[i].Replace("Mer från ", "");
+                    }
+
+                    return listOfSwedishStrings;
 
                 }
 
@@ -58,6 +68,7 @@ namespace Snylta.Services
 
                 // Print the response
             }
+           
             /*
              * The code for your call to the translation service will be added to this
              * function in the next few sections.
