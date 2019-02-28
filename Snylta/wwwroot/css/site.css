@@ -15,12 +15,16 @@ a {
     width: 100%;
 }
 
- .card {
+.bulletList > span{
+    font-size: 1.2rem;
+}
+
+.card {
     margin: 30px;
     width: 18rem;
     /*height: 24rem;*/
     /*border-radius: 6.25rem;*/
-    text-align:center;
+    text-align: center;
 }
 
 .numberCircle {

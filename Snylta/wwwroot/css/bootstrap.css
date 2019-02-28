@@ -235,6 +235,7 @@ th {
 label {
     display: inline-block;
     margin-bottom: 0.5rem;
+    color: white;
 }
 
 button {
@@ -2320,6 +2321,7 @@ textarea.form-control {
 .form-text {
     display: block;
     margin-top: 0.25rem;
+    color: white;
 }
 
 .form-row {
