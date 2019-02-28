@@ -1,11 +1,12 @@
 ﻿@model IEnumerable<Snylta.Models.Thing>
 @inject AppSettings AppSettings
 
+<br />  
 <label for="site-search"></label>
-<input type="search" id="site-search" name="q"
+<input type="search" id="site-search" placeholder="Hitta prylen!" name="q"
        aria-label="Search through site content">
 
-<button onclick="filter()">Sök</button>
+<button class="btn btn-default" onclick="filter()">Sök</button>
 
 @{int i = 0; }
 
