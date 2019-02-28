@@ -21,28 +21,27 @@
 
         <!-- Card -->
         <a data-toggle="modal" data-target="#@cardId">
-            <div class="card d-inline-block" aria-disabled="true" style="width: 18rem; height: 24rem;">
+            <div class="card rounded-top rounded-bottom" style="width: 18rem; height: 17rem; display: inline-block">
 
                 <div class="card-img-top">
                     @if (String.IsNullOrEmpty(group.Pic))
                     {
-                        <img class="card-img-top rounded-top" src="~/images/fallback.jpg" width="200" />
+                        <img class="d-block w-100 rounded-top" src="~/images/fallback.jpg" width="200" />
                     }
                     else
                     {
-                        <img class="card-img-top rounded-top" src="~/groupimages/@group.Pic" width="200" />
+                        <img class="d-block w-100 rounded-top" src="~/groupimages/@group.Pic" width="200" />
                     }
                 </div>
 
                 <div class="card-body">
                     <h5 class="card-title">@group.Name</h5>
-                    <p class="card-text">@group.Description</p>
                 </div>
             </div>
         </a>
 
         <!-- Modal -->
-        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="@cardId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" style="">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
