@@ -112,8 +112,6 @@ namespace Snylta
                 if (files.Count > 0 || webcamImgs.Count() > 0)
                 {
 
-                    
-
                     var picList = new List<ThingPic>();
                     var filePaths = new List<string>();
                     //Lägger till bilder som användaren har tagit med kamera
@@ -395,7 +393,7 @@ namespace Snylta
                                 continue;
                             var thingGuid = Guid.NewGuid().ToString();
 
-                            var pic = AddPicFromFileAsync(file, filePaths);
+                            var pic = await AddPicFromFileAsync(file, filePaths);
 
                             picList.Add(pic);
                             _context.ThingPic.Add(pic);
